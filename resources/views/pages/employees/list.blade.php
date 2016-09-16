@@ -39,7 +39,7 @@
          </div>
     </div>
     <hr class="bg-red">
-        <div class=" col-md-10  col-sm-10">
+        <div class=" col-md-12  col-sm-12">
             @if(Session::has('flash_message'))
                 <div class="alert alert-success">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -58,7 +58,7 @@
                          <table class="table striped hovered cell-hovered border bordered">
                              <thead>
                                  <tr>
-                                     <th class="sortable-column">#</td>
+                                     <!-- <th class="sortable-column">#</td> -->
                                      <th>ID </th>
                                      <th>Name</th>
                                      <th>Code</th>
@@ -73,9 +73,9 @@
                              <tbody>
                                 @foreach($employees as $employee)
                                     <tr>
-                                     <td><span class="red-bullet"> {{( $employee->id ) }}</span></td>
+                                     <!-- <td><span class="red-bullet"> {{( $employee->id ) }}</span></td> -->
                                      <td>{{( $employee->idnum ) }}</td>
-                                     <td class="center-txt"><span style="font-weight:bold">{{ucwords( $employee->name ) }}</span></td>
+                                     <td class="center-txt"><span style="font-weight:bold">{{strtoupper( $employee->name ) }}</span></td>
                                      <td class="center-txt">{{ strtoupper( $employee->code )}}</td>
                                      <td>{{ ucwords( $employee->rank )}}</td>
                                      <td class="center-txt">{{ ucwords( $employee->emp_type )}}</td>
