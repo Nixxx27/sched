@@ -1,0 +1,136 @@
+.cursorpointer
+{
+    cursor: pointer;
+}
+
+
+.nz-red
+{
+    color:#c05640;
+}
+
+.nz-black
+{
+    color:#282726
+}
+
+
+.sidebg
+{
+    background-image: url('../../images/floral.png');
+}
+
+#btm
+{
+    position: fixed;
+    bottom: 0;
+    padding-left:5px;
+    text-align:center;
+}
+
+.bold
+{
+    font-weight: bold;
+}
+
+.legend-style
+{
+    color:white;
+    border-bottom:1px solid #A7414A;
+}
+
+.quick-access
+{
+    background-color:#CE352C;
+    color:white;
+    padding:5px;
+    cursor:pointer;
+    text-shadow: 2px 2px #0a0a0a;
+}
+
+.menu-button
+{
+    background-color:#CE352C;
+    color:white;
+    cursor:pointer;
+    padding:10px;
+}
+.skyred
+{
+    background-color:#CE352C;
+}
+
+#background
+{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -100;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    background: url(polina.jpg) no-repeat;
+    background-size: cover;
+    opacity: 0.92;
+}
+
+#summer-theme
+{
+    background-color:#efea5b;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+#winter-theme
+{
+    background-color:blue;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+.center-txt
+{
+    text-align:center !important;
+}
+
+/*for employee view table */
+.details_td
+{
+    border:1px solid black;
+    height:40px;
+    padding-left:10px;
+    width:250px;
+    font-size:14px;
+    background-color:#0878a4;
+    color:white;
+}
+
+.details_td_red
+{
+    border:1px solid black;
+    height:40px;
+    padding-left:10px;
+    width:250px;
+    font-size:14px;
+    background-color:#CE352C;
+    color:white;
+}
+/*for employee view table */
+.data_td
+{
+    padding-left:10px;
+    padding-right:200px;
+    width:auto;
+}
+
+
+/*for  add qualification - Employee details */
+.add_qualification
+{
+    border-radius: 30px; 
+    -webkit-border-radius: 30px; 
+    -moz-border-radius: 30px; 
+}
