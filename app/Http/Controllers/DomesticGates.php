@@ -185,7 +185,9 @@ class DomesticGates extends Controller
                  return back()->withErrors(["There is already 4 Personnel Assigned "]);
             }else
             {
-                $csa = employees::where('rank','=','csa')
+                $csa = employees::where('rank','=','csa1')
+                ->orwhere('rank','=','csa2')
+                ->orwhere('rank','=','csa3')
                 ->where($theme_query,'=',$schedule)
                 ->where('senior','=',0)      // set to 0 = not senior
                 ->where('level','=',$where1) //level should match

@@ -37,8 +37,13 @@ class DomesticCounter extends Controller
             ->orderBy('counter', 'asc')
             ->get();
 
+        $check_here    = dom_counter::where('date', '=', $dt)->lists('emp_id');
+
+        $unassigned_emp = dom_counter::whereNotIn('emp_id', $check_here)->get();
+
+
         $count = $dom_counter->count();
-        return view('pages.counter.domestic.list', compact('dom_counter', 'dt', 'count'));
+        return view('pages.counter.domestic.list', compact('dom_counter', 'dt', 'count','unassigned_emp'));
     }
 
     /**
@@ -133,7 +138,28 @@ class DomesticCounter extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request,
+            [
+                'emp_id' => 'required',
+                'remarks' => 'required',
+            ],
+            $messages = array('emp_id.required' => 'The employee field is required')
+        );
 
+
+        //FOR remarks
+        $previous_remarks = dom_counter::where('emp_id','=',$request['curr_emp'])
+            ->where("date","=",$request['assign_date'])->first();
+
+        $new_remarks = $previous_remarks->remarks . "\r\n" . "\r\n" . "=================" . "\r\n" .
+        \Auth::user()->name . " updated CTR#" . $request['log_counter'] . " " . carbon::now() . "\r\n" .
+         "From ". $request['curr_emp'] . " to " . $request['emp_id'] . "\r\n" . "\r\n" .
+            $request['remarks'] ;
+
+        $request['remarks'] = $new_remarks;
+
+
+        //check if exist
         $exist = dom_counter::where('emp_id','=',$request['emp_id'])
             ->where("date","=",$request['assign_date'])
             ->get();
@@ -228,9 +254,12 @@ class DomesticCounter extends Controller
 
         //@param variables @schedule $date.
         $schedule = $request['schedule'];
+        $schedule_1 = $request['schedule_1'];
         $date =  $request['date'];
         $shift = $request['shift'];
         $level = $request['level_dom'];
+
+        //return $schedule . "ss" . $schedule_1;
      
         // query if level 1 is check
         $where1 =( $request['dom_counter_level_1'] ==1) ? 1 : 0 ;
@@ -245,7 +274,18 @@ class DomesticCounter extends Controller
 
        //@return Supervisor Randomize Query limit 4.
         $sup = employees::where('rank','=','supervisor')
-            ->where($theme_query,'=',$schedule)
+            ->where(function($q) use ($theme_query,$schedule,$schedule_1) {  //advance query with param pass
+                      $q->where($theme_query, $schedule)     // return two chosen schedules
+                        ->orWhere($theme_query, $schedule_1);
+                  })
+
+            ->orwhere('rank','=','supervisors')
+                ->where(function($q) use ($theme_query,$schedule,$schedule_1)
+                    {
+                      $q->where($theme_query, $schedule)
+                        ->orWhere($theme_query, $schedule_1);
+                  })
+
             ->orderByRaw("RAND()")
             ->limit(4)
             ->get();
@@ -279,20 +319,36 @@ class DomesticCounter extends Controller
       
             
             // CSA Query with Level
-       $csa = employees::where('rank','=','csa')
-            ->where($theme_query,'=',$schedule)
-            ->where('senior','=',0)      // set to 0 = not senior
-            ->where('level','=',$where1) //level should match
-                ->orwhere('level','=',$where2) //level 2 should match
-                 ->where('senior','=',0)// set to 0 = not senior
-            ->orwhere('level','=',$where3) //level 3 should match
-            ->where('senior','=',0)// set to 0 = not senior
+       $csa = employees::where('rank','=','csa1')
+           
+            ->where('senior','=',0) // set to 0 = should NOT be senior
+            ->where(function($q) use ($theme_query,$schedule,$schedule_1) {  //advance query with param pass
+                    $q->where($theme_query, $schedule)     // return two chosen schedules
+                    ->orWhere($theme_query, $schedule_1);
+                })
+            
+            ->orwhere('rank','=','csa2')
+            ->where('senior','=',0) 
+            ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
+                    $q->where($theme_query, $schedule)  
+                    ->orWhere($theme_query, $schedule_1);
+                })
+
+            ->orwhere('rank','=','csa3')
+            ->where('senior','=',0) 
+
+            ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
+                    $q->where($theme_query, $schedule)  
+                    ->orWhere($theme_query, $schedule_1);
+                })
+            
             ->orderByRaw("RAND()")
             ->limit( $csa_counter_limit) //defends on available counter
             ->get();
 
+
             //@return CSA Query row Count.
-        $csa_row_cnt = $csa->count();
+       $csa_row_cnt = $csa->count();
 
             //@return csa counter list.
         $chunk_csa =  collect( $csa_counter_array_list )->take($csa_row_cnt);
@@ -315,10 +371,28 @@ class DomesticCounter extends Controller
        $senior_counter_limit = $senior_collection->count();
        
             // CSA Query with Level
-       $senior = employees::where('rank','=','csa')
-           ->where($theme_query,'=',$schedule)
-           ->where('level','=',$where1)  //level should match
-           ->where('senior','=',1)      // senior set to 1
+       $senior = employees::where('rank','=','csa1')
+            //Match to Schedule ==============
+            ->where('senior','=',1) // set to 1 = should be senior
+            ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
+                    $q->where($theme_query, $schedule)  
+                    ->orWhere($theme_query, $schedule_1);
+                })
+  
+            ->orwhere('rank','=','csa2')
+            ->where('senior','=',1)
+            ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
+                    $q->where($theme_query, $schedule)  
+                    ->orWhere($theme_query, $schedule_1);
+                })
+            
+            ->orwhere('rank','=','csa3')
+            ->where('senior','=',1)
+            ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
+                    $q->where($theme_query, $schedule)  
+                    ->orWhere($theme_query, $schedule_1);
+                }) 
+            
             ->orderByRaw("RAND()")
             ->limit( $senior_counter_limit) //defends on available counter
             ->get();
@@ -333,6 +407,39 @@ class DomesticCounter extends Controller
         /**** end CSA senior counter ****/
 
 
+
+         /*
+        *
+        * @return mabuhay lounge Randomize Query.
+        */
+
+            //@retrieve Domestic csa Counter List from DB.
+        $mabuhay_counter_array_list = counter_list::find(4)->counter; // domestic csa-senior.
+        $mabuhay_counter_array_list = explode(',', $mabuhay_counter_array_list); // explode list to array.
+
+            //convert to collect to count counter list array of dom counter
+       $mabuhay_collection = collect($mabuhay_counter_array_list);
+       $mabuhay_counter_limit = $mabuhay_collection->count();
+       
+            // CSA Query with Level
+       $mabuhay = employees::where('cntr_ml','=',1)
+            ->where($theme_query,'=',$schedule)
+            ->orwhere($theme_query,'=',$schedule_1)
+            ->orderByRaw("RAND()")
+            ->limit( $mabuhay_counter_limit) //defends on available counter
+
+            ->get();
+
+            //@return CSA Query row Count.
+        $mabuhay_row_cnt = $mabuhay->count();
+
+            //@return csa counter list.
+        $chunk_mabuhay =  collect( $mabuhay_counter_array_list )->take($mabuhay_row_cnt);
+        $available_counter_for_mabuhay = $chunk_mabuhay->all();
+
+        /**** end mabuhay lounge counter ****/
+
+
             //@return add to logs.
         $this->logs('Random Domestic Counter For : ' . $date );
 
@@ -341,7 +448,8 @@ class DomesticCounter extends Controller
             'schedule','date','shift',
             'sup','sup_row_cnt','available_counter_for_sup',
             'csa','csa_row_cnt','available_counter_for_csa',
-            'senior','senior_row_cnt','available_counter_for_senior') );
+            'senior','senior_row_cnt','available_counter_for_senior',
+            'mabuhay','mabuhay_row_cnt','available_counter_for_mabuhay') );
     }
 
     /**

@@ -19,7 +19,7 @@
     <!-- /.row -->
     <div class="row">
 
-        <div class=" col-md-5 col-sm-5">
+        <div class=" col-md-8 col-sm-8">
             <?php
                 $n=1;
                 foreach( $sup as $supervisor)
@@ -47,6 +47,15 @@
                 }
                 ?>
 
+                <?php
+                $b=1;
+                foreach( $mabuhay as $mabuhay1)
+                {
+                    $mabuhay_name_array[ $b ]= $mabuhay1->name;
+                    $b++;
+                }
+                ?>
+
 
                 {!! Form::open(array('url' => 'domestic_counter/counter_save')) !!}
                 <input type="hidden" name="schedule" value="{{ $schedule }}">
@@ -63,13 +72,13 @@
                     <!--SUPERVISOR COUNTER -->
                     <tr>
                         <td colspan="2" style="text-align:center;font-size:20px;font-weight:bold">Supervisors Counter</td>
-                    </tr
+                    </tr>
                     <?php $z=1 //initiate number or table rows and column ?>
                         @foreach ( $available_counter_for_sup as $sup_counter )
 
                             <tr>
                                  <td>{{ $sup_counter }}  <input type="hidden" name="counter[]" value="{{ $sup_counter }}"></td>
-                                <td>  {{ $sup_name_array[ $z ] }} <input type="hidden" name="emp_id[]" value="{{ $sup_name_array[ $z ] }}"></td>
+                                <td>  {{ strtoupper( $sup_name_array[ $z ] ) }} <input type="hidden" name="emp_id[]" value="{{ $sup_name_array[ $z ] }}"></td>
                             </tr>
                     <?php $z++ ?>
                          @endforeach
@@ -77,13 +86,13 @@
                     <!--SENIOR COUNTER -->
                     <tr>
                         <td colspan="2" style="text-align:center;font-size:20px;font-weight:bold">CSA Senior Counter</td>
-                    </tr
+                    </tr>
                     <?php $h=1 //initiate number or table rows and column ?>
                         @foreach ( $available_counter_for_senior as $senior_counter )
 
                             <tr>
                                  <td>{{ $senior_counter }}  <input type="hidden" name="counter[]" value="{{ $senior_counter }}"></td>
-                                <td>  {{ $senior_name_array[ $h ] }} <input type="hidden" name="emp_id[]" value="{{ $senior_name_array[ $h ] }}"></td>
+                                <td>  {{ strtoupper( $senior_name_array[ $h ] )}} <input type="hidden" name="emp_id[]" value="{{ $senior_name_array[ $h ] }}"></td>
                             </tr>
                     <?php $h++ ?>
                          @endforeach        
@@ -98,17 +107,37 @@
                             @foreach ( $available_counter_for_csa as $csa_counter )
                                 <tr>
                                     <td>{{ $csa_counter }}  <input type="hidden" name="counter[]" value="{{ $csa_counter }}"></td>
-                                    <td>  {{ $csa_name_array[ $c ] }} <input type="hidden" name="emp_id[]" value="{{ $csa_name_array[ $c ] }}"></td>
+                                    <td>  {{ strtoupper( $csa_name_array[ $c ]) }} <input type="hidden" name="emp_id[]" value="{{ $csa_name_array[ $c ] }}"></td>
                                 </tr>
                                 <?php $c++ ?>
                             @endforeach
+
+
+                    <!--MABUHAY LOUNGE COUNTER -->
+                    <tr>
+                        <td colspan="2" style="text-align:center;font-size:20px;font-weight:bold">Mabuhay Lounge Counter</td>
+                    </tr>
+                    <?php $nn=1 //initiate number or table rows and column ?>
+                        @foreach ( $available_counter_for_mabuhay as $mabuhay_counter )
+
+                            <tr>
+                                 <td>{{ $mabuhay_counter }}  <input type="hidden" name="counter[]" value="{{ $mabuhay_counter }}"></td>
+                                <td>  {{ strtoupper( $mabuhay_name_array[ $nn ] )}} <input type="hidden" name="emp_id[]" value="{{ $mabuhay_name_array[ $nn ] }}"></td>
+                            </tr>
+                    <?php $nn++ ?>
+                         @endforeach 
                         <tr>
                             <td colspan="2"><button class="button primary loading-pulse" onclick="return confirm('Are you sure you want to save assigned personnel?')">Save</button>
                             </td>
 
                         </tr>
+
+
+
                     </tbody>
                 </table>
+
+               
                 {!! Form::close() !!}
         </div>
     </div>

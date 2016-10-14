@@ -146,10 +146,44 @@
 
                 </div><!--grid-->
             </div><!--example-->
-            {!! Form::close() !!}
+          
 
         </div><!--md 7-->
-    </div> <!-- /.row -->
 
+
+        <div class="col-md-5">
+                <h4><strong><i class="fa fa-cog fa-spin" aria-hidden="true"></i> Additional settings</strong></h4>
+                <hr>
+        <fieldset>
+            <legend>Counter qualification:</legend>
+            <div class="checkbox" title="can be assigned to Mabuhay Lounge?">
+                <label>
+                    <input type="checkbox" name="cntr_ml" value="1" {{ $employees->cntr_ml==1 ? 'checked' : '' }}> Mabuhay lounge
+                </label>
+            </div>
+
+            <div class="checkbox" title="for Terminal 1 counter?">
+                <label>
+                    <input type="checkbox" name="cntr_t_one" value="1" {{ $employees->cntr_t_one==1 ? 'checked' : '' }}> Terminal 1
+                </label>
+            </div>
+
+            <div class="checkbox" title="for domestic counter only?">
+                <label>
+                    <input type="checkbox" name="cntr_dom_only" value="1" {{ $employees->cntr_dom_only==1 ? 'checked' : '' }}> For domestic only
+                </label>
+            </div>
+
+            <div class="checkbox" title="for international counter only?">
+                <label>
+                    <input type="checkbox" name="cntr_int_only" value="1" {{ $employees->cntr_int_only==1 ? 'checked' : '' }}> For international only
+                </label>
+            </div>
+
+        </fieldset>
+
+        </div><!--md 5 / side settings-->
+    </div> <!-- /.row -->
+  {!! Form::close() !!}
 
 @endsection

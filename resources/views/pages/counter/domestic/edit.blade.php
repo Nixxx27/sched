@@ -12,13 +12,16 @@
     <!-- /.row -->
      <hr class="bg-red">
     <div class="col-md-5 col-sm-5">
+        @include('errors.list')
         <h3><small>From <span style="text-decoration: underline">{{ strtoupper($dom_counter->emp_id) }}</span> to <span id="new_csa" style="text-decoration: underline"></span></small></h3><br>
         {!! Form::open(array('method'=>'PATCH','name'=>'domestic_counter_edit','id'=>'domestic_counter_edit','action' => array('DomesticCounter@update', $dom_counter->id) )) !!}
          <table class="table">
              <tr>
-                   <td>
+                   <td><label for="emp_id">Employees</label><br>
+                      <input type="hidden" name="curr_emp" value="{{ $dom_counter->emp_id }}">
                        <input type="hidden" name="log_counter" value="{{ $dom_counter->counter }}">
                        <input type="hidden" name="assign_date" value="{{ $dom_counter->date->format('Y-m-d') }}">
+                      
                       <select id="emp_id" name="emp_id" class="input-control select" onChange="new_name()">
                           <option value="{{ $dom_counter->emp_id }}">{{ ucwords($dom_counter->emp_id) }}</option>
                           @foreach( $employees as $employee)
@@ -26,6 +29,10 @@
                           @endforeach
                       </select>
                   </td>
+              </tr>
+              <tr>
+                <td><label for="remarks">remarks</label><br>
+                <textarea name="remarks" rows='10' cols="50" id="remarks"></textarea></td>
               </tr>
          </table>
         <br>

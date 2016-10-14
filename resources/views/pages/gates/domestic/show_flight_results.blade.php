@@ -33,7 +33,7 @@
         </div>
     </div>
     <hr class="bg-red">
-    <div class=" col-md-3 col-sm-3">
+    <div class=" col-md-4 col-sm-3">
         @include('errors.list')
 		<div class="CSSTableGenerator" >
 		<h4 style="text-align:center"><strong>Available Flights</strong></h4>
@@ -55,7 +55,7 @@
   					<input type="hidden" name="dom_gate_level_2" value="{{ $dom_gate_level_2 }} ">
   					<input type="hidden" name="dom_gate_level_3" value="{{ $dom_gate_level_3 }} ">
   					<input type="hidden" name="flight_num" value="{{ $d_f->flight_num}}">
-  					<td style="text-align:center"><button type="submit" class="btn btn-success btn-md">GO</button></td>
+  					<td style="text-align:center"><button type="submit" onclick="return confirm('Proceed assigning Employees?')" class="btn btn-success btn-md">GO</button></td>
 				</tr>
 			{!! Form::close() !!}
 				<?php $i++; ?>
@@ -65,7 +65,7 @@
 	</div>
 
 
-	<div class="col-md-offset-1 col-md-3  col-sm-offset-1 col-sm-3">
+	<div class="col-md-offset-1 col-md-6 col-sm-offset-1 col-sm-3">
         @if(Session::has('flash_message'))
             <div class="alert alert-success">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -87,7 +87,7 @@
 				<tr>
 					<td>{{ $x }}</td>
 					<td><b>{{ $emp_assigned->flight_num }}</b> </td>
-					<td  style="text-align:center">{{ $emp_assigned->employees->name }} </td>
+					<td  style="text-align:center">{{ strtoupper($emp_assigned->employees->name) }} </td>
 				</tr>
 			{!! Form::close() !!}
 				<?php $x++; ?>

@@ -20,6 +20,10 @@ class employees extends Model
         'level',
         'senior',
         'emp_type',
+        'cntr_ml',
+        'cntr_dom_only',
+        'cntr_int_only',
+        'cntr_t_one'
     );
 
 

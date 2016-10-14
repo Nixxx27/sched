@@ -102,7 +102,7 @@
         </div>
  
         <!-- Level -->
-        <div class="col-lg-7 col-md-7">
+        <div class="col-lg-3 col-md-3">
            <h4><strong> Area of Assignment :</strong> <i class="fa fa-check-circle" style="color:green" aria-hidden="true"></i></h4>
              <h4><strong><i>Level {{ $employee->level }}
                     @if ($employee->senior==1)
@@ -114,6 +114,19 @@
                     <li>{{ ucwords( $l->area ) }}</li>
                 @endforeach   
             </ul>
-        </div>
+        </div><!-- Lecol-lg-3 -->
+
+
+        <!-- Settings -->
+        <div class="col-lg-4 col-md-4">
+           <h4><strong><i class="fa fa-cog fa-spin" aria-hidden="true"></i> Additional settings</strong></h4>
+            
+            <ul type='square'> 
+                {!!($employee->cntr_ml ==1)? '<li>For dom mabuhay lounge counter </li>' : ''!!}  
+                {!!($employee->cntr_t_one ==1)? '<li>For terminal 1</li>' : ''!!}
+                {!!($employee->cntr_dom_only ==1)? '<li>For domestic counter only</li>' : ''!!}
+                {!!($employee->cntr_int_only ==1)? '<li>For intl counter only</li>' : ''!!}
+            </ul>
+        </div><!-- settings-->
     </div>
 @endsection

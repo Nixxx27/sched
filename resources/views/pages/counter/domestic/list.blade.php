@@ -25,7 +25,7 @@
                 </button>
             </a>
         </div>
-       <div class=" col-md-4 col-sm-4 col-xs-4 pull-right">
+       <div class=" col-md-5 col-sm-5 col-xs-4 pull-right">
             <form class="form-inline" action="domestic_counter" method="GET" name="counter_calendar" id="counter_calendar">
                 <div class="input-control text" id="datepicker" data-format="yyyy-mm-dd">
                     <input type="text" name="date" value="{{ $dt }}">
@@ -36,7 +36,7 @@
         </div>
     </div>
     <hr class="bg-red">
-    <div class="col-md-6 col-sm-6">
+    <div class="col-md-12 col-sm-12">
         @if(Session::has('flash_message'))
             <div class="alert alert-success">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -68,7 +68,12 @@
                                 @foreach($dom_counter as $counter)
                                     <tr>
                                         <td style="text-align:center"><i class="fa fa-desktop fa2x" aria-hidden="true"></i> <span style="font-weight:bold;font-size:20px">{{ $counter->counter  }}</span></td>
-                                        <td >{{ $counter->emp_id }}</td>
+                                        <td >{{ strtoupper( $counter->emp_id )}}<!--this is emp name-->
+                                            
+                                            @if (!empty( $counter->remarks ))
+                                                <sup  data-toggle="modal" data-target="#{{$counter->id}}-modal" style="background-color:#5cb85c;color:#fff;display:inline;padding:.2em .6em .3em;font-size:75%;line-height: 1;text-align:center;border-radius: .25em;cursor:pointer">updated</sup>
+                                            @endif
+                                        </td>
 
                                             @if( $counter->shift == 1)
                                             <td style="text-align:center"> morning <img src="{{ url('public/images/morning.png') }}" width="20px"></td>
@@ -86,12 +91,44 @@
                             @endif
                             </tbody>
                         </table>
+
+                       <!--  <table>
+                        @foreach($unassigned_emp as $u_emp)
+
+                            <tr>
+                                <td>{{ $u_emp->emp_id }}</td>
+                                
+                            </tr>
+                        @endforeach
+                        </table> -->
+
+
+<!-- Modal -->
+@foreach($dom_counter as $counter)
+    @if (!empty( $counter->remarks ))
+    <div class="modal fade" id="{{$counter->id}}-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Reason for Employee changed</h4>
+          </div>
+          <div class="modal-body">
+                <textarea rows="15" cols="67" disabled="" style="font-size:80%;background-color:transparent">
+                    {{ $counter->remarks }}
+                </textarea>
+                
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+      </div>
+    </div>
+    @endif
+@endforeach
              </div>
 
-        <div class="col-md-offset-5 col-md-6 col-sm-12" style="margin-bottom:20px">
-            {{--{!! $dom_counter->appends(['season' => Input::get('search') ])->render() !!}--}}
-
-        </div>
     </div>
     </div>
     </div>
@@ -102,6 +139,18 @@
     <script>
         $(function(){
             $("#datepicker").datepicker();
+
+
+          
+
+
         });
+    function view_update_reason($reason){
+                alert($reason);
+            }
+
     </script>
 @endsection
+
+
+

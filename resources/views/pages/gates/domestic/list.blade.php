@@ -28,7 +28,7 @@
         </div>
     </div>
     <hr class="bg-red">
-    <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+    <div class="col-md-10 col-sm-offset-1 col-sm-5">
         @if(Session::has('flash_message'))
             <div class="alert alert-success">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -49,7 +49,7 @@
                             <tr>
                                 <td><span class="red-bullet"> {{ $x  }}</span></td>
                                 <td><b>{{ $gates->flight_num }}</b> </td>
-                                <td>{{ $gates->employees->name }} </td>
+                                <td>{{ strtoupper($gates->employees->name) }} </td>
                              </tr>
                          <?php $x++; ?>
                         @endforeach

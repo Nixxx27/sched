@@ -211,9 +211,18 @@ class EmployeesController extends Controller
             ],
             $messages = array( 'idnum.required' => 'ID num field is required', 'emp_type.required'=> 'Type field is required' )
             );
+
+        //check if counter checkbox is checked or not
+       $request['cntr_ml'] =(empty( $request['cntr_ml'] ))? 0 : 1;
+       $request['cntr_dom_only'] =(empty( $request['cntr_dom_only'] ))? 0 : 1;
+       $request['cntr_int_only'] =(empty( $request['cntr_int_only'] ))? 0 : 1;
+       $request['cntr_t_one'] =(empty( $request['cntr_t_one'] ))? 0 : 1;
+
+
         $employees = employees::findorfail($id);
         $employees->update( $request->all() );
         $this->logs('Update employee DB id no: ' . $id);
+
 
         return redirect('employees/' .$id)->with([
             'flash_message' => 'Updated Successfully'

@@ -14,7 +14,8 @@ class dom_counter extends Model
         'emp_id',
         'shift',
         'schedule',
-        'date'
+        'date',
+         'remarks'
     );
 
 

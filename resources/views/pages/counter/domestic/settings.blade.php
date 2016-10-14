@@ -80,6 +80,13 @@
                         <input type="hidden" name="dom_counter_level_1" size="3" value={{ $dom_counter_level_1->settings }}>
                         <input type="hidden" name="dom_counter_level_2" size="3" value={{ $dom_counter_level_2->settings }}>
                         <input type="hidden" name="dom_counter_level_3" size="3" value={{ $dom_counter_level_3->settings }}>
+
+                        <select id="schedule_1" name="schedule_1" class="input-control select">
+                            <option value=""></option>
+                            @foreach( $schedule as $sched)
+                                <option value="{{ $sched->id }}">{{ $sched->sched_num }}</option>
+                            @endforeach
+                        </select>
                     
                     </td>
                 </tr>

@@ -28,7 +28,7 @@
             </a>
             <hr>
         </div>
-        <div class=" col-md-8  col-sm-8">
+        <div class=" col-md-12  col-sm-12">
             @if(Session::has('flash_message'))
                 <div class="alert alert-success">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
