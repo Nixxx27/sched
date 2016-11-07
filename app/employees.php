@@ -23,7 +23,10 @@ class employees extends Model
         'cntr_ml',
         'cntr_dom_only',
         'cntr_int_only',
-        'cntr_t_one'
+        'cntr_t_one',
+        'cntr_cnt_asg',
+        'rd1',
+        'rd2'
     );
 
 
@@ -44,6 +47,17 @@ class employees extends Model
     public function w_schedule()
     {
         return $this->belongsTo('App\schedule','winter_sched');
+    }
+
+      /**
+     *
+     *  Employee has many leaves
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function theleaves()
+    {
+        return $this->hasMany('App\leaves');
     }
 
 }

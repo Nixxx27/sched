@@ -69,37 +69,50 @@
             <table class="table">
                 <tbody>
                 <tr>
-                    <td> Select Employees Schedule:</td>
-                    <td>
-                        <select id="schedule" name="schedule" class="input-control select">
-                            <option value=""></option>
-                            @foreach( $schedule as $sched)
-                                <option value="{{ $sched->id }}">{{ $sched->sched_num }}</option>
-                            @endforeach
-                        </select>
-                        <input type="hidden" name="dom_counter_level_1" size="3" value={{ $dom_counter_level_1->settings }}>
-                        <input type="hidden" name="dom_counter_level_2" size="3" value={{ $dom_counter_level_2->settings }}>
-                        <input type="hidden" name="dom_counter_level_3" size="3" value={{ $dom_counter_level_3->settings }}>
-
-                        <select id="schedule_1" name="schedule_1" class="input-control select">
-                            <option value=""></option>
-                            @foreach( $schedule as $sched)
-                                <option value="{{ $sched->id }}">{{ $sched->sched_num }}</option>
-                            @endforeach
-                        </select>
-                    
-                    </td>
-                </tr>
-                <tr>
-                    <td> Select Date:</td>
-                    <td>
+                    <td><i class="fa fa-calendar" aria-hidden="true"></i> Select Date:</td>
+                    <td colspan="2">
                         <div class="input-control text" id="datepicker" data-format="yyyy-mm-dd">
                             <input type="text" name="date">
                             <button class="button"><span class="mif-calendar"></span></button>
                         </div>
                     </td>
                 </tr>
+
                 <tr>
+                    <td><i class="fa fa-user" aria-hidden="true"></i> Supervisors Schedule:</td>
+                    <td colspan="2">
+                        <select id="schedule_2" name="schedule_2" class="input-control select">
+                            <option value=""></option>
+                            @foreach( $schedule as $sched)
+                                <option value="{{ $sched->id }}">{{ $sched->sched_num }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><i class="fa fa-users" aria-hidden="true"></i> CSA Schedules:</td>
+                    <td colspan="2">
+                        <select id="schedule" name="schedule" class="input-control select">
+                            <option value=""></option>
+                            @foreach( $schedule as $sched)
+                                <option value="{{ $sched->id }}">{{ $sched->sched_num }}</option>
+                            @endforeach
+                        </select>
+                        <select id="schedule_1" name="schedule_1" class="input-control select">
+                            <option value=""></option>
+                            @foreach( $schedule as $sched)
+                                <option value="{{ $sched->id }}">{{ $sched->sched_num }}</option>
+                            @endforeach
+                        </select>
+                        
+                        <input type="hidden" name="dom_counter_level_1" size="3" value={{ $dom_counter_level_1->settings }}>
+                        <input type="hidden" name="dom_counter_level_2" size="3" value={{ $dom_counter_level_2->settings }}>
+                        <input type="hidden" name="dom_counter_level_3" size="3" value={{ $dom_counter_level_3->settings }}>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td><i class="fa fa-clock-o" aria-hidden="true"></i> Select Shift:</td>
                     <td>
                         <label class="input-control radio small-check">
                             <input type="radio" name="shift_x" id="winter"  onclick="x_shift(1)">

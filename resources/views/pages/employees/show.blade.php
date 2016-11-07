@@ -99,6 +99,35 @@
                     </td>
                 </tr>
             </table>
+
+            <hr>
+            <table border="1" cellpadding="20px" cellspacing="20px" class="table-responsive" >
+            <tr>
+                <td class="details_td" colspan="3">
+                <span class="mif-event-available mif-2x mif-ani-shake"></span> Employee Leaves 
+               <span style="cursor: pointer" data-toggle="modal" data-target="#myModal" class="mif-plus pull-right" title="add new leave"></span> 
+              </td>
+            </tr>
+            <tr>
+                <td style="text-align:center;font-weight:bold">Date</td>
+                <td colspan="2" style="text-align:center;font-weight:bold">Type</td>
+              
+            </tr>
+            @foreach($leaves as $l)
+            <tr >
+                <td style="padding:5px">{{ $l->date->format('M d,Y l')}}</td>
+                <td style="padding:5px">{{ $l->leave_type }}</td>
+                
+                <td style="text-align:center;padding:5px">
+                {!! Form::open(['method'=>'DELETE', 'action' => ['LeaveController@destroy', $l->id]]) !!}
+                <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this record?')"><span style="font-weight: bold"><i class="fa fa-times"></i> Delete</span></button>
+                {!! Form::close() !!}
+                </td>
+            </tr>
+
+            @endforeach
+
+            </table>
         </div>
  
         <!-- Level -->
@@ -119,14 +148,84 @@
 
         <!-- Settings -->
         <div class="col-lg-4 col-md-4">
-           <h4><strong><i class="fa fa-cog fa-spin" aria-hidden="true"></i> Additional settings</strong></h4>
+           <h4><strong><i class="fa fa-cog fa-spin" aria-hidden="true"></i> Additional settings
+                <br><small>Qualified for:</small>
+           </strong></h4>
             
             <ul type='square'> 
-                {!!($employee->cntr_ml ==1)? '<li>For dom mabuhay lounge counter </li>' : ''!!}  
-                {!!($employee->cntr_t_one ==1)? '<li>For terminal 1</li>' : ''!!}
-                {!!($employee->cntr_dom_only ==1)? '<li>For domestic counter only</li>' : ''!!}
-                {!!($employee->cntr_int_only ==1)? '<li>For intl counter only</li>' : ''!!}
+                {!!($employee->cntr_ml ==1)? '<li>Mabuhay counter </li>' : ''!!}  
+                {!!($employee->cntr_t_one ==1)? '<li>Terminal 1</li>' : ''!!}
+                {!!($employee->cntr_dom_only ==1)? '<li>Domestic Counter</li>' : ''!!}
+                {!!($employee->cntr_int_only ==1)? '<li>Intl Counter</li>' : ''!!}
+                {!!($employee->cntr_cnt_asg ==1)? "<li>Can't Assigned to Counter</li>" : ''!!}
             </ul>
         </div><!-- settings-->
     </div>
+@endsection
+
+@section('modal')
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add Leave</h4>
+      </div>
+      <div class="modal-body">
+        {!! Form::open(array('name'=>'add_leave_to_employee','id'=>'add_employee','action'=>'LeaveController@store')) !!}
+       <table class="table">
+            <input type="hidden" name="emp_id" value="{{ $employee->id }}">
+            <input type="hidden" name="emp_name" value="{{ $employee->name }}">
+            <tr>
+                <td>Select Date:</td>
+                    <td colspan="2">
+                        <div class="input-control text" id="datepicker" data-format="yyyy-mm-dd">
+                            <input type="text" name="date">
+                            <button class="button"><span class="mif-calendar"></span></button>
+                        </div>
+                    </td>
+                </tr>
+
+           <tr>
+           <td>Select Leave Type:</td>
+            <td><select class="input-control text" name="leave_type">
+                <option value="">--Select Leave Type--</option>
+               <option value="vacation">VL</option>
+               <option value="maternity">Maternity</option>
+               <option value="paternity">Paternity</option>
+               <option value="others">Others</option>
+           </select></td>
+           </tr>
+           <tr>
+                <td>
+                    <label>Remarks</label>
+                </td>
+               
+           </tr>
+           <tr>
+               <td colspan="2">
+                   <textarea name="remarks" cols="50" rows="5"></textarea>
+               </td>
+           </tr>
+
+        </table>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+      {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+@endsection
+
+@section('js')
+    <script>
+        $(function(){
+            $("#datepicker").datepicker();
+        });
+
+    </script>
 @endsection

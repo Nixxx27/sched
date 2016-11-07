@@ -12,6 +12,7 @@ use App\counter_list;
 use Carbon\Carbon;
 use App\schedule;
 use App\season;
+use App\leaves;
 use App\global_settings;
 use App\Http\Controllers\File;
 
@@ -37,13 +38,9 @@ class DomesticCounter extends Controller
             ->orderBy('counter', 'asc')
             ->get();
 
-        $check_here    = dom_counter::where('date', '=', $dt)->lists('emp_id');
-
-        $unassigned_emp = dom_counter::whereNotIn('emp_id', $check_here)->get();
-
 
         $count = $dom_counter->count();
-        return view('pages.counter.domestic.list', compact('dom_counter', 'dt', 'count','unassigned_emp'));
+        return view('pages.counter.domestic.list', compact('dom_counter', 'dt', 'count'));
     }
 
     /**
@@ -217,31 +214,6 @@ class DomesticCounter extends Controller
         return view('pages.counter.domestic.settings',compact('schedule','dom_counter_level_1','dom_counter_level_2','dom_counter_level_3') );
     }
 
-    /**
-     *
-     * @Redirect To Dom_counter_random_result.
-     *
-     * @Param pass $shift,$date
-     */
-//    public function save_counter_settings(Request $request)
-//    {
-//       // return "hello sched: " . $request['sched'] . " Date: " . $request['date']. " Theme : " . $request['theme'];
-//        $sched = $request['sched'];
-//        if( $request['theme'] =='winter')
-//        {
-//            $theme_query = "winter_sched";
-//        }else{
-//            $theme_query = "summer_sched";
-//        }
-//        //@return Supervisor Randomize Query.
-//        $sup = employees::where('rank','=','supervisor')
-//            ->where($theme_query,'=',$sched)
-//            ->orderByRaw("RAND()")
-//            ->limit(4)
-//            ->get();
-//
-//        return view('pages.counter.domestic.test',compact('sup'));
-//    }
 
     /**
      *
@@ -252,39 +224,52 @@ class DomesticCounter extends Controller
     public function counter_setup(DomCounterRequest $request)
     {
 
+
+       
         //@param variables @schedule $date.
         $schedule = $request['schedule'];
-        $schedule_1 = $request['schedule_1'];
+        $schedule_1 =$request['schedule_1'];
+        $schedule_2 = $request['schedule_2']; //supervisor schedule
         $date =  $request['date'];
         $shift = $request['shift'];
         $level = $request['level_dom'];
 
-        //return $schedule . "ss" . $schedule_1;
-     
         // query if level 1 is check
         $where1 =( $request['dom_counter_level_1'] ==1) ? 1 : 0 ;
         // query if level 2 is check
         $where2 =( $request['dom_counter_level_2'] ==1) ? 2 : 0 ;
 
-            // query if level 3 is check
+        // query if level 3 is check
         $where3 =( $request['dom_counter_level_3'] ==1) ? 3 : 0 ;
+
         //@Return will check weather default theme is winter or summer.
         $season = season::findorfail(1);
         $theme_query = ($season->theme =='winter')? "winter_sched" : "summer_sched";
 
+        // return integer of day now sunday = 0, saturday = 6
+        $day_num_now = date("w");
+
+        // Return all leaves on selected Date
+
+      $on_leave_today = leaves::where('date', '=', $date)->lists('emp_id');
+
+
        //@return Supervisor Randomize Query limit 4.
         $sup = employees::where('rank','=','supervisor')
-            ->where(function($q) use ($theme_query,$schedule,$schedule_1) {  //advance query with param pass
-                      $q->where($theme_query, $schedule)     // return two chosen schedules
-                        ->orWhere($theme_query, $schedule_1);
-                  })
+            ->whereNotIn('id', $on_leave_today ) // where not on leave today
+            ->where('cntr_cnt_asg','=',0)
+            ->where('rd1','<>',$day_num_now) // where not restday today
+            ->where('rd2','<>',$day_num_now) // where not restday today
+            ->where('cntr_int_only','=',0) // assigned to international only
+            ->where($theme_query, $schedule_2) // supervisors schedule
+           
 
             ->orwhere('rank','=','supervisors')
-                ->where(function($q) use ($theme_query,$schedule,$schedule_1)
-                    {
-                      $q->where($theme_query, $schedule)
-                        ->orWhere($theme_query, $schedule_1);
-                  })
+            ->whereNotIn('id', $on_leave_today ) // where not on leave today
+                ->where('cntr_cnt_asg','=',0)
+                ->where('rd1','<>',$day_num_now) // where not restday today
+                ->where('rd2','<>',$day_num_now) // where not restday today
+                ->where($theme_query, $schedule_2) // supervisors schedule
 
             ->orderByRaw("RAND()")
             ->limit(4)
@@ -319,33 +304,46 @@ class DomesticCounter extends Controller
       
             
             // CSA Query with Level
-       $csa = employees::where('rank','=','csa1')
+      $csa = employees::where('rank','=','csa1')
            
-            ->where('senior','=',0) // set to 0 = should NOT be senior
+            ->where('cntr_cnt_asg','=',0) // set to 0 meaning CAN assigned
+            ->where('rd1','<>',$day_num_now) // where not restday today
+            ->where('rd2','<>',$day_num_now) // where not restday today
+            ->where('cntr_int_only','=',0) // assigned to international only
+            ->whereNotIn('id', $on_leave_today ) // where not on leave today
             ->where(function($q) use ($theme_query,$schedule,$schedule_1) {  //advance query with param pass
                     $q->where($theme_query, $schedule)     // return two chosen schedules
                     ->orWhere($theme_query, $schedule_1);
                 })
             
             ->orwhere('rank','=','csa2')
-            ->where('senior','=',0) 
+            ->where('cntr_cnt_asg','=',0) 
+            ->where('rd1','<>',$day_num_now) // where not restday today
+            ->where('rd2','<>',$day_num_now) // where not restday today
+            ->where('cntr_int_only','=',0) // assigned to international only
+            ->whereNotIn('id', $on_leave_today ) // where not on leave today
             ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
                     $q->where($theme_query, $schedule)  
                     ->orWhere($theme_query, $schedule_1);
                 })
 
             ->orwhere('rank','=','csa3')
-            ->where('senior','=',0) 
+            ->whereNotIn('id', $on_leave_today ) // where not on leave today
+            ->where('cntr_cnt_asg','=',0) 
+            ->where('rd1','<>',$day_num_now) // where not restday today
+            ->where('rd2','<>',$day_num_now) // where not restday today
+            ->where('cntr_int_only','=',0) // assigned to international only
 
             ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
                     $q->where($theme_query, $schedule)  
                     ->orWhere($theme_query, $schedule_1);
                 })
-            
-            ->orderByRaw("RAND()")
-            ->limit( $csa_counter_limit) //defends on available counter
-            ->get();
 
+             ->orderByRaw("RAND()")
+            ->limit( $csa_counter_limit); //defends on available counter
+  
+          $csa  =  $csa->get();
+          $choosed_csa_id = $csa->lists('id');
 
             //@return CSA Query row Count.
        $csa_row_cnt = $csa->count();
@@ -374,25 +372,45 @@ class DomesticCounter extends Controller
        $senior = employees::where('rank','=','csa1')
             //Match to Schedule ==============
             ->where('senior','=',1) // set to 1 = should be senior
+            ->where('cntr_cnt_asg','=',0)
+            ->where('rd1','<>',$day_num_now) // where not restday today
+            ->where('rd2','<>',$day_num_now) // where not restday today
+            ->where('cntr_int_only','=',0) // assigned to international only
             ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
                     $q->where($theme_query, $schedule)  
                     ->orWhere($theme_query, $schedule_1);
                 })
-  
+            ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
+            ->whereNotIn('id', $on_leave_today ) // where not on leave today
+           
             ->orwhere('rank','=','csa2')
             ->where('senior','=',1)
+            ->where('cntr_cnt_asg','=',0)
+            ->where('rd1','<>',$day_num_now) // where not restday today
+            ->where('rd2','<>',$day_num_now) // where not restday today
+            ->where('cntr_int_only','=',0) // assigned to international only
             ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
                     $q->where($theme_query, $schedule)  
                     ->orWhere($theme_query, $schedule_1);
                 })
+             ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
+            ->whereNotIn('id', $on_leave_today ) // where not on leave today
+
             
             ->orwhere('rank','=','csa3')
             ->where('senior','=',1)
+            ->where('cntr_cnt_asg','=',0)
+            ->where('rd1','<>',$day_num_now) // where not restday today
+            ->where('rd2','<>',$day_num_now) // where not restday today
+            ->where('cntr_int_only','=',0) // assigned to international only
             ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
                     $q->where($theme_query, $schedule)  
                     ->orWhere($theme_query, $schedule_1);
                 }) 
+             ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
+             ->whereNotIn('id', $on_leave_today ) // where not on leave today
             
+
             ->orderByRaw("RAND()")
             ->limit( $senior_counter_limit) //defends on available counter
             ->get();
@@ -408,12 +426,12 @@ class DomesticCounter extends Controller
 
 
 
-         /*
+        /*
         *
-        * @return mabuhay lounge Randomize Query.
+        * @return mabuhay COUNTER Randomize Query.
         */
 
-            //@retrieve Domestic csa Counter List from DB.
+        //@retrieve Domestic csa Counter List from DB.
         $mabuhay_counter_array_list = counter_list::find(4)->counter; // domestic csa-senior.
         $mabuhay_counter_array_list = explode(',', $mabuhay_counter_array_list); // explode list to array.
 
@@ -423,8 +441,23 @@ class DomesticCounter extends Controller
        
             // CSA Query with Level
        $mabuhay = employees::where('cntr_ml','=',1)
+            ->where('cntr_cnt_asg','=',0)
+            ->where('rd1','<>',$day_num_now) // where not restday today
+            ->where('rd2','<>',$day_num_now) // where not restday today
+            ->where('cntr_int_only','=',0) // assigned to international only
+            ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
+            ->whereNotIn('id', $on_leave_today ) // where not on leave today
             ->where($theme_query,'=',$schedule)
+            
             ->orwhere($theme_query,'=',$schedule_1)
+            ->where('cntr_ml','=',1)
+            ->where('cntr_cnt_asg','=',0)
+            ->where('rd1','<>',$day_num_now) // where not restday today
+            ->where('rd2','<>',$day_num_now) // where not restday today
+            ->where('cntr_int_only','=',0) // assigned to international only
+            ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
+            ->whereNotIn('id', $on_leave_today ) // where not on leave today
+            
             ->orderByRaw("RAND()")
             ->limit( $mabuhay_counter_limit) //defends on available counter
 
@@ -496,6 +529,21 @@ class DomesticCounter extends Controller
             ]);;
 
     }
+
+     /**
+     *
+     * @Return Unassigned Personnel base on date and schedules
+     *
+     */
+
+     public function view_unassigned_personnel(Request $request,$date,$sched)
+     {
+
+      //  return $sched;
+    return $view_personnel_on_that_date = dom_counter::where("date","=",$date)->lists('schedule');
+     $mabuhay = employees::where('cntr_ml','=',1)
+            ->whereNotIn('id', $choosed_csa_id ); // where not selected in CSA
+     }
 
 
 

@@ -180,6 +180,11 @@
                 </label>
             </div>
 
+            <div class="checkbox" title="{{ $employees->name }} Cannot be assigned to Counter?">
+                <label>
+                    <input type="checkbox" name="cntr_cnt_asg" value="1" {{ $employees->cntr_cnt_asg==1 ? 'checked' : ''}}> Cannot be assigned to Counter?
+                </label>
+            </div>
         </fieldset>
 
         </div><!--md 5 / side settings-->

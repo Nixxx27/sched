@@ -73,7 +73,7 @@
                              <tbody>
                                 @foreach($employees as $employee)
                                     <tr>
-                                     <!-- <td><span class="red-bullet"> {{( $employee->id ) }}</span></td> -->
+                                     <td><span class="red-bullet"> {{( $employee->id ) }}</span></td>
                                      <td>{{( $employee->idnum ) }}</td>
                                      <td class="center-txt"><span style="font-weight:bold">{{strtoupper( $employee->name ) }}</span></td>
                                      <td class="center-txt">{{ strtoupper( $employee->code )}}</td>

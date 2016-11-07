@@ -80,6 +80,7 @@ Route::group(['middleware' => 'web'], function () {
      */
     Route::get('domestic_counter/view_counter_settings','DomesticCounter@view_counter_settings'); // view settings for domestic counter.
     Route::post('domestic_counter/counter_setup','DomesticCounter@counter_setup'); // view result random.
+     Route::get('domestic_counter/unassigned/{date}/{sched}','DomesticCounter@view_unassigned_personnel'); // view unassigned employees
     Route::get('domestic_counter/test','DomesticCounter@test');
     Route::post('domestic_counter/counter_save','DomesticCounter@save_counter_assignment'); // Save Random counter to Db.
     Route::resource('domestic_counter', 'DomesticCounter');
@@ -123,6 +124,11 @@ Route::group(['middleware' => 'web'], function () {
     * @return About Controller
     */
     Route::get('company','AboutController@company');
+
+    /*
+    * @return Employee Leaves Controller
+    */
+    Route::resource('leave', 'LeaveController');
 
     /*
     * @return Level Controller

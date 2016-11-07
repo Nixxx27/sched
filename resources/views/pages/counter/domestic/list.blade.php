@@ -24,6 +24,12 @@
                     <span class="mif-plus"></span>
                 </button>
             </a>
+
+             <a href='domestic_counter/unassigned/{{ $dt }}'>
+            <button class="button loading-pulse lighten info" title="view unassigned Personnel">
+                 <span class="mif-arrow-up-right"></span> 
+            </button>
+            </a>
         </div>
        <div class=" col-md-5 col-sm-5 col-xs-4 pull-right">
             <form class="form-inline" action="domestic_counter" method="GET" name="counter_calendar" id="counter_calendar">
@@ -92,17 +98,7 @@
                             </tbody>
                         </table>
 
-                       <!--  <table>
-                        @foreach($unassigned_emp as $u_emp)
-
-                            <tr>
-                                <td>{{ $u_emp->emp_id }}</td>
-                                
-                            </tr>
-                        @endforeach
-                        </table> -->
-
-
+            
 <!-- Modal -->
 @foreach($dom_counter as $counter)
     @if (!empty( $counter->remarks ))
@@ -139,15 +135,7 @@
     <script>
         $(function(){
             $("#datepicker").datepicker();
-
-
-          
-
-
         });
-    function view_update_reason($reason){
-                alert($reason);
-            }
 
     </script>
 @endsection

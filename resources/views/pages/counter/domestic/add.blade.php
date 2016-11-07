@@ -40,7 +40,7 @@
                                 <select name="emp_id" id="emp_id" class="input-control select">
                                     <option value="" >Select Employee</option>
                                     @foreach($employees as $employee)
-                                        <option value="{{ $employee->name }}">{{ ucwords($employee->name) }}</option>
+                                        <option value="{{ $employee->name }}">{{ strtoupper($employee->name) }}</option>
                                     @endforeach
                                 </select>
                             </td>

@@ -25,7 +25,7 @@
                       <select id="emp_id" name="emp_id" class="input-control select" onChange="new_name()">
                           <option value="{{ $dom_counter->emp_id }}">{{ ucwords($dom_counter->emp_id) }}</option>
                           @foreach( $employees as $employee)
-                              <option value="{{ $employee->name }}">{{ ucwords($employee->name) }}</option>
+                              <option value="{{ $employee->name }}">{{ strtoupper($employee->name) }}</option>
                           @endforeach
                       </select>
                   </td>

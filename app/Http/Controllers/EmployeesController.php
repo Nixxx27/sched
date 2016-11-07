@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth;
 use App\employees;
 use App\emp_qualities;
 use App\level;
+use App\leaves;
 use App\rank;
 use App\schedule;
 use App\season;
@@ -165,6 +166,8 @@ class EmployeesController extends Controller
         //return area of assignment for employees
         $level = level::where('level','=',$employee->level)->get();
 
+        //return all leaves of employee
+        $leaves = leaves::where('emp_id','=',$employee->id)->orderBy('date')->get();
         
         //retrieve all qualification of employee.
         $emp_qualities = emp_qualities::where('emp_id', '=' ,$id)->get();
@@ -172,7 +175,7 @@ class EmployeesController extends Controller
          //qualification to Array convertion
        $emp_qualities_array = emp_qualities::where('emp_id', '=' ,$id)->lists('qualification_id')->toArray();
         
-        return view('pages.employees.show',compact('employee','qualification','emp_qualities','emp_qualities_array','level'));
+        return view('pages.employees.show',compact('employee','qualification','emp_qualities','emp_qualities_array','level','leaves'));
     }
 
     /**
@@ -217,6 +220,7 @@ class EmployeesController extends Controller
        $request['cntr_dom_only'] =(empty( $request['cntr_dom_only'] ))? 0 : 1;
        $request['cntr_int_only'] =(empty( $request['cntr_int_only'] ))? 0 : 1;
        $request['cntr_t_one'] =(empty( $request['cntr_t_one'] ))? 0 : 1;
+       $request['cntr_cnt_asg'] =(empty( $request['cntr_cnt_asg'] ))? 0 : 1;
 
 
         $employees = employees::findorfail($id);
