@@ -4,7 +4,7 @@ PSD Scheduling System for automated employee assignment.
 
 ## Official Documentation
 
-Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
+Documentation for the framework can be found on the [NIkko Zabala](http://Nikkozabala.com).
 
 
 ### License
