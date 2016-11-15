@@ -8,6 +8,7 @@ use App\employees;
 use App\Http\Requests;
 use App\Http\Requests\DomCounterRequest;
 use App\dom_counter;
+use App\dom_counter_sched;
 use App\counter_list;
 use Carbon\Carbon;
 use App\schedule;
@@ -84,11 +85,12 @@ class DomesticCounter extends Controller
         );
 
         $exist = dom_counter::where("emp_id", "=", $request['emp_id']) //check if duplicate
-            ->where("shift", "=", $request['shift'])
             ->where("date", "=", $request['date'])
-            ->orWhere("date", "=", $request['date'])
             ->where("shift", "=", $request['shift'])
+
+            ->orWhere("date", "=", $request['date'])
             ->where("counter", "=", $request['counter'])
+            ->where("shift", "=", $request['shift'])
             ->count();
 
         if ($exist > 0)
@@ -119,11 +121,45 @@ class DomesticCounter extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
+        $date=$request->date;
+
+        //@Return will check weather default theme is winter or summer.
+        $season = season::findorfail(1);
+        $theme_query = ($season->theme =='winter')? "winter_sched" : "summer_sched";
+
+        //@return assigned employees on the requested date
+        $view_personnel_on_that_date = dom_counter::where("date","=",$date)->lists('emp_id');
+     //   $view_personnel_on_that_date = explode(' ', $view_personnel_on_that_date); // explode list to array. --not included
+                
+        //@return scheduled selected on the requested date
+
+        $dom_counter_sched = dom_counter_sched::where("date","=",$date)->lists('sched');
+        $dom_counter_sched = explode(',', $dom_counter_sched); // explode list to array.
+
+            $unassigned_csa = employees::whereIn($theme_query,$dom_counter_sched)
+                ->whereNotIn('name',$view_personnel_on_that_date)
+                ->where('rank','=','CSA1')
+                ->orwhere('rank','=','CSA2')
+                    ->whereIn($theme_query,$dom_counter_sched)
+                     ->whereNotIn('name',$view_personnel_on_that_date)
+                ->orwhere('rank','=','CSA3')
+                    ->whereIn($theme_query,$dom_counter_sched)
+                    ->whereNotIn('name',$view_personnel_on_that_date)
+                ->orwhere('rank','=','SUPERVISOR')
+                    ->whereIn($theme_query,$dom_counter_sched)
+                    ->whereNotIn('name',$view_personnel_on_that_date)
+                ->orwhere('rank','=','SUPERVISORS')
+                    ->whereIn($theme_query,$dom_counter_sched)
+                    ->whereNotIn('name',$view_personnel_on_that_date)
+                ->orderBy('name')
+                ->get();
+
+
         $employees = employees::all();
         $dom_counter = dom_counter::findorfail($id);
-        return view('pages.counter.domestic.edit',compact('dom_counter','employees'));
+        return view('pages.counter.domestic.edit',compact('dom_counter','employees','unassigned_csa'));
     }
 
     /**
@@ -224,8 +260,6 @@ class DomesticCounter extends Controller
     public function counter_setup(DomCounterRequest $request)
     {
 
-
-       
         //@param variables @schedule $date.
         $schedule = $request['schedule'];
         $schedule_1 =$request['schedule_1'];
@@ -233,6 +267,7 @@ class DomesticCounter extends Controller
         $date =  $request['date'];
         $shift = $request['shift'];
         $level = $request['level_dom'];
+
 
         // query if level 1 is check
         $where1 =( $request['dom_counter_level_1'] ==1) ? 1 : 0 ;
@@ -473,12 +508,14 @@ class DomesticCounter extends Controller
         /**** end mabuhay lounge counter ****/
 
 
-            //@return add to logs.
+   
+
+        //@return add to logs.
         $this->logs('Random Domestic Counter For : ' . $date );
 
             //@return view with variables.
         return view('pages.counter.domestic.setup',compact(
-            'schedule','date','shift',
+            'schedule','schedule_1','schedule_2','date','shift',
             'sup','sup_row_cnt','available_counter_for_sup',
             'csa','csa_row_cnt','available_counter_for_csa',
             'senior','senior_row_cnt','available_counter_for_senior',
@@ -494,32 +531,65 @@ class DomesticCounter extends Controller
 
     public function save_counter_assignment(Request $request)
     {
-         //@Add each counter and employees to Database.
-            $i = 0;
-            foreach ($request->emp_id as $emp_id) {
-                $exist = dom_counter::where("counter","=",$request['counter'][$i]) //check if Exist
-                    ->where("date","=",$request['date'])
-                    ->where("shift","=",$request['shift'])
-                    ->get();
+        $schedule =     $request['schedule'];
+        $schedule_1=    $request['schedule_1'];
+        $schedule_2 =   $request['schedule_2'];
+        $date=          $request['date'];
+            
+           
 
+            $exist = dom_counter::where("date","=",$request['date'])
+                ->where("shift","=",$request['shift'])
+                ->get();
+               
                if ( $exist->count() == 0)
                {
-                   dom_counter::firstorCreate([
-                       'counter' => $request->counter[$i],
-                       'emp_id' => $emp_id,
-                       'shift' => $request['shift'],
-                       'schedule' => $request['schedule'],
-                       'date' => $request['date']
-                   ]);
-                   $i++;
-               }else
-               {
+                    //@Add each counter and employees to Database.
+                    $i = 0;
+                    foreach ($request->emp_id as $emp_id) 
+                    {
+                        
+                        dom_counter::firstorCreate([
+                           'counter' => $request->counter[$i],
+                           'emp_id' => $emp_id,
+                           'shift' => $request['shift'],
+                           'schedule' => $request['schedule'],
+                           'date' => $request['date']
+                       ]);
+                       $i++;
+                    }
+
+                    // add counter date and employees schedule to db
+
+                    $schedule_1 = ( empty( $schedule_1 ))? " " : "," . $schedule_1;
+                    
+                    $dom_counter_sched_count =  dom_counter_sched::where('date',$date)->count();
+
+                    if ( $dom_counter_sched_count > 0)
+                    {
+                        $update_dom_counter_sched = dom_counter_sched::where('date',$date)->first();
+                        $update_dom_counter_sched->update([
+                                'sched' =>   $update_dom_counter_sched->sched . ",". $schedule . "," . $schedule_2 . $schedule_1
+                                ]);
+                            $update_dom_counter_sched->save();
+                    }else
+                    {
+                        dom_counter_sched::where('date',$date)->get();
+                        $dom_counter_sched = dom_counter_sched::firstorCreate([
+                        'date' => $request['date'],
+                        'sched' => $schedule . "," . $schedule_2 . $schedule_1
+                        ]);
+
+                        $dom_counter_sched->save();
+                    }
+                }else
+                {
                    //@return add to logs.
                    $this->logs('Failed Random Domestic Counter For : ' . $request['date'] . " ,already has assigned personnel" );
 
                    return redirect('domestic_counter/view_counter_settings')->withErrors(['Date already has assigned Personnel']);
                }
-            }
+         
 
             //@return add to logs.
             $this->logs('Save Random Domestic Counter For: ' . $request->date);
@@ -536,13 +606,127 @@ class DomesticCounter extends Controller
      *
      */
 
-     public function view_unassigned_personnel(Request $request,$date,$sched)
+     public function view_unassigned_personnel(Request $request,$date)
      {
 
-      //  return $sched;
-    return $view_personnel_on_that_date = dom_counter::where("date","=",$date)->lists('schedule');
-     $mabuhay = employees::where('cntr_ml','=',1)
-            ->whereNotIn('id', $choosed_csa_id ); // where not selected in CSA
+        
+        //@Return will check weather default theme is winter or summer.
+        $season = season::findorfail(1);
+        $theme_query = ($season->theme =='winter')? "winter_sched" : "summer_sched";
+
+        //@return assigned employees on the requested date
+        $view_personnel_on_that_date = dom_counter::where("date","=",$date)->lists('emp_id');
+     //   $view_personnel_on_that_date = explode(' ', $view_personnel_on_that_date); // explode list to array. --not included
+                
+        //@return scheduled selected on the requested date
+
+        $dom_counter_sched = dom_counter_sched::where("date","=",$date)->lists('sched');
+        $dom_counter_sched = explode(',', $dom_counter_sched); // explode list to array.
+
+            $unassigned_csa = employees::whereIn($theme_query,$dom_counter_sched)
+                ->whereNotIn('name',$view_personnel_on_that_date)
+                ->where('rank','=','CSA1')
+                ->orwhere('rank','=','CSA2')
+                    ->whereIn($theme_query,$dom_counter_sched)
+                     ->whereNotIn('name',$view_personnel_on_that_date)
+                ->orwhere('rank','=','CSA3')
+                    ->whereIn($theme_query,$dom_counter_sched)
+                    ->whereNotIn('name',$view_personnel_on_that_date)
+                ->orwhere('rank','=','SUPERVISOR')
+                    ->whereIn($theme_query,$dom_counter_sched)
+                    ->whereNotIn('name',$view_personnel_on_that_date)
+                ->orwhere('rank','=','SUPERVISORS')
+                    ->whereIn($theme_query,$dom_counter_sched)
+                    ->whereNotIn('name',$view_personnel_on_that_date)
+                ->orderBy($theme_query)
+                ->get();
+
+                //counter lists
+
+           
+        $dom_csa = counter_list::find(1)->counter; //$dom csa.
+       $dom_csa = explode(',', $dom_csa);
+
+        $dom_sup = counter_list::find(2)->counter; //$dom csa.
+        $dom_sup = explode(',', $dom_sup);
+
+        $csa_senior = counter_list::find(3)->counter; //$dom csa.
+        $csa_senior = explode(',', $csa_senior);
+
+        $mabuhay = counter_list::find(4)->counter; //$dom csa.
+       $mabuhay = explode(',', $mabuhay);
+
+        //merge all counters
+         $dom_counters = array_merge($dom_csa, $dom_sup,$csa_senior,$mabuhay);
+         
+        //@return counter on the requested date for morning shift
+        $view_counter_on_that_date_morning = dom_counter::where("date","=",$date)->where('shift',1)->lists('counter');
+        $view_counter_on_that_date_morning_count =  $view_counter_on_that_date_morning->count();
+        
+        if ( $view_counter_on_that_date_morning_count > 0)
+        {   
+            $view_counter_on_that_date_morning =  $view_counter_on_that_date_morning->toArray();
+            $dom_counters_morning = array_diff($dom_counters,$view_counter_on_that_date_morning);
+        }else
+        {
+            $dom_counters_morning = [];
+        }
+
+        //@return counter on the requested date for afternoon shift
+        $view_counter_on_that_date_afternoon = dom_counter::where("date","=",$date)->where('shift',2)->lists('counter');
+        $view_counter_on_that_date_afternoon_count =  $view_counter_on_that_date_afternoon->count();
+        
+        if (  $view_counter_on_that_date_afternoon_count > 0)
+        {
+            $view_counter_on_that_date_afternoon =  $view_counter_on_that_date_afternoon->toArray();
+            $dom_counters_afternoon = array_diff($dom_counters,$view_counter_on_that_date_afternoon);
+        }else
+        {
+            $dom_counters_afternoon = [];
+        }
+        
+
+  
+        return view('pages.counter.domestic.unassigned',compact('unassigned_csa','counter','dom_counters_morning','dom_counters_afternoon','date') );
+
+     }
+
+     public function add_from_unassigned(Request $request)
+     {
+
+        $this->validate($request,
+            [
+                'counter' => 'required',
+                'emp_id' => 'required',
+                'date' => 'required',
+                'schedule' => 'required',
+                'shift' => 'required',
+           ],
+            $messages = array('emp_id.required' => 'The employee field is required')
+        );
+
+        $exist = dom_counter::where("emp_id", "=", $request['emp_id']) //check if duplicate
+            ->where("date", "=", $request['date'])
+            ->where("shift", "=", $request['shift'])
+
+            ->orWhere("date", "=", $request['date'])
+            ->where("counter", "=", $request['counter'])
+            ->where("shift", "=", $request['shift'])
+            ->count();
+
+        if ($exist > 0)
+        {
+            $this->logs('Failed to manually assign from unassigned list :'. $request['emp_id'] . ' to Counter : ' .$request['counter'] . ' For date : '. $request['date']);
+            return back()->withErrors(["There is alreasy assigned Personnel"]);
+        }else
+        {
+            dom_counter::create($request->all());
+            $this->logs('Manually assign from unassigned list :'. $request['emp_id'] . ' to Counter : ' .$request['counter'] . ' For date : '. $request['date']);
+            return back()->with([
+            'flash_message' => $request['emp_id'] ." successfully assigned to counter " . $request['counter'] ]);
+
+        }
+
      }
 
 

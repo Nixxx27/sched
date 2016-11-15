@@ -24,12 +24,13 @@
                     <span class="mif-plus"></span>
                 </button>
             </a>
-
+              @if($count !== 0)
              <a href='domestic_counter/unassigned/{{ $dt }}'>
-            <button class="button loading-pulse lighten info" title="view unassigned Personnel">
+            <button class="button loading-pulse lighten info"  title="view unassigned Personnel">
                  <span class="mif-arrow-up-right"></span> 
             </button>
             </a>
+            @endif
         </div>
        <div class=" col-md-5 col-sm-5 col-xs-4 pull-right">
             <form class="form-inline" action="domestic_counter" method="GET" name="counter_calendar" id="counter_calendar">
@@ -88,7 +89,8 @@
                                             @endif
 
                                         <td style="text-align:center">
-                                            {!! Form::open(['method'=>'GET', 'action' => ['DomesticCounter@edit', $counter->id]]) !!}
+                                            {!! Form::open(['method'=>'GET', 'action' => ['DomesticCounter@edit',$counter->id,$dt ]]) !!}
+                                            <input type="hidden" name="date" value={{$dt}}>
                                             <button class="btn btn-primary btn-sm" ><span style="font-weight: bold"><i class="fa fa-pencil"></i> </span></button>
                                             {!! Form::close() !!}
                                         </td>

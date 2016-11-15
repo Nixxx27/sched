@@ -59,6 +59,8 @@
 
                 {!! Form::open(array('url' => 'domestic_counter/counter_save')) !!}
                 <input type="hidden" name="schedule" value="{{ $schedule }}">
+                <input type="hidden" name="schedule_1" value="{{ $schedule_1 }}">
+                <input type="hidden" name="schedule_2" value="{{ $schedule_2 }}">
                 <input type="hidden" name="date" value="{{ $date }}">
                 <input type="hidden" name="shift" value="{{ $shift }}">
                 <table class="table table-bordered table-hover table-striped">

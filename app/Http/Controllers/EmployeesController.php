@@ -32,7 +32,7 @@ class EmployeesController extends Controller
      */
     public function index(Request $request)
     {
-        $search = ($request->search=='')? '' : $request->search;
+        $search = ($request->search=='')? '' : ltrim(rtrim( $request->search ));
 
         $employees = employees::where('name', 'like', '%'.$search . '%')
             ->orWhere('idnum', 'like', '%'.$search . '%')

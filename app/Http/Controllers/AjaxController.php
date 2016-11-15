@@ -20,4 +20,9 @@ class AjaxController extends Controller
         }
     }
 
+    public function add_counter_unassigned()
+    {
+    	echo 'nikko';// $_GET['selected_counter'];
+    }
+
 }

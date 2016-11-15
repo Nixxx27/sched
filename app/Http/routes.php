@@ -78,12 +78,15 @@ Route::group(['middleware' => 'web'], function () {
      * @return Domestic Counter
      *
      */
+
     Route::get('domestic_counter/view_counter_settings','DomesticCounter@view_counter_settings'); // view settings for domestic counter.
     Route::post('domestic_counter/counter_setup','DomesticCounter@counter_setup'); // view result random.
-     Route::get('domestic_counter/unassigned/{date}/{sched}','DomesticCounter@view_unassigned_personnel'); // view unassigned employees
+    Route::get('domestic_counter/unassigned/{date}/','DomesticCounter@view_unassigned_personnel'); // view unassigned employees
+    Route::post('add_to_counter_unassigned','DomesticCounter@add_from_unassigned'); // view unassigned 
     Route::get('domestic_counter/test','DomesticCounter@test');
     Route::post('domestic_counter/counter_save','DomesticCounter@save_counter_assignment'); // Save Random counter to Db.
     Route::resource('domestic_counter', 'DomesticCounter');
+
 
 
     /*

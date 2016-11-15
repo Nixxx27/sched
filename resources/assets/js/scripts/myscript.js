@@ -13,8 +13,8 @@ function dom_counter_employee()
     var shift = $('#shift').val(),
         area = "domestic counter";
             $.ajax({
-            type: 'GET',
-            url: "get_dom_counter_employee",
+            type: 'POST',
+            url: "domestic_counter/unassigned/2016-11-14",
             data: {selected_shift: shift},
             success: function(result){
                 $('#myTable').append("<table id='myTable'><tr><td>Employee Name</td><td>Code</td></tr>" + result + "</table>" );
@@ -25,6 +25,19 @@ function dom_counter_employee()
 };
 
 
+function add_counter_unassigned()
+{
+
+    var selected_counter = $('#counter').val();
+            $.ajax({
+             type: 'GET',
+             url: "add_counter_unassigned",
+             data: {selected_counter: selected_counter},
+            success: function(result){
+               alert(result);
+            }
+        });
+}
 
 //CLOCK
 
