@@ -282,7 +282,7 @@ class DomesticCounter extends Controller
         $theme_query = ($season->theme =='winter')? "winter_sched" : "summer_sched";
 
         // return integer of day now sunday = 0, saturday = 6
-        $day_num_now = date("w");
+        $day_num_now =date( "w", strtotime( $date)); //date("w");
 
         // Return all leaves on selected Date
 
@@ -322,6 +322,53 @@ class DomesticCounter extends Controller
         $available_counter_for_sup = $chunk_sup->all();
 
 
+        /*
+        *
+        * @return Business COUNTER Randomize Query.
+        */
+
+        //@retrieve Domestic csa Counter List from DB.
+        $mabuhay_counter_array_list = counter_list::find(4)->counter; // domestic csa-senior.
+        $mabuhay_counter_array_list = explode(',', $mabuhay_counter_array_list); // explode list to array.
+
+            //convert to collect to count counter list array of dom counter
+       $mabuhay_collection = collect($mabuhay_counter_array_list);
+       $mabuhay_counter_limit = $mabuhay_collection->count();
+       
+            // CSA Query with Level
+       $mabuhay = employees::where('cntr_ml','=',1)
+            ->where('cntr_cnt_asg','=',0)
+            ->where('rd1','<>',$day_num_now) // where not restday today
+            ->where('rd2','<>',$day_num_now) // where not restday today
+            ->where('cntr_int_only','=',0) // assigned to international only
+            // ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
+            ->whereNotIn('id', $on_leave_today ) // where not on leave today
+            ->where($theme_query,'=',$schedule)
+            
+            ->orwhere($theme_query,'=',$schedule_1)
+            ->where('cntr_ml','=',1)
+            ->where('cntr_cnt_asg','=',0)
+            ->where('rd1','<>',$day_num_now) // where not restday today
+            ->where('rd2','<>',$day_num_now) // where not restday today
+            ->where('cntr_int_only','=',0) // assigned to international only
+            // ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
+            ->whereNotIn('id', $on_leave_today ) // where not on leave today
+            
+            ->orderByRaw("RAND()")
+            ->limit( $mabuhay_counter_limit); //defends on available counter
+
+            $mabuhay = $mabuhay->get();
+            $choosed_mabuhay_id = $mabuhay->lists('id');
+
+            //@return CSA Query row Count.
+        $mabuhay_row_cnt = $mabuhay->count();
+
+            //@return csa counter list.
+        $chunk_mabuhay =  collect( $mabuhay_counter_array_list )->take($mabuhay_row_cnt);
+        $available_counter_for_mabuhay = $chunk_mabuhay->all();
+
+        /**** end mabuhay lounge counter ****/
+
 
         /*
         *
@@ -350,6 +397,7 @@ class DomesticCounter extends Controller
                     $q->where($theme_query, $schedule)     // return two chosen schedules
                     ->orWhere($theme_query, $schedule_1);
                 })
+            ->whereNotIn('id', $choosed_mabuhay_id ) // where not selected in Business Counter
             
             ->orwhere('rank','=','csa2')
             ->where('cntr_cnt_asg','=',0) 
@@ -361,6 +409,7 @@ class DomesticCounter extends Controller
                     $q->where($theme_query, $schedule)  
                     ->orWhere($theme_query, $schedule_1);
                 })
+            ->whereNotIn('id', $choosed_mabuhay_id ) // where not selected in Business Counter
 
             ->orwhere('rank','=','csa3')
             ->whereNotIn('id', $on_leave_today ) // where not on leave today
@@ -373,6 +422,7 @@ class DomesticCounter extends Controller
                     $q->where($theme_query, $schedule)  
                     ->orWhere($theme_query, $schedule_1);
                 })
+            ->whereNotIn('id', $choosed_mabuhay_id ) // where not selected in Business Counter
 
              ->orderByRaw("RAND()")
             ->limit( $csa_counter_limit); //defends on available counter
@@ -416,6 +466,7 @@ class DomesticCounter extends Controller
                     ->orWhere($theme_query, $schedule_1);
                 })
             ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
+            ->whereNotIn('id', $choosed_mabuhay_id ) // where not selected in Business Counter
             ->whereNotIn('id', $on_leave_today ) // where not on leave today
            
             ->orwhere('rank','=','csa2')
@@ -428,7 +479,8 @@ class DomesticCounter extends Controller
                     $q->where($theme_query, $schedule)  
                     ->orWhere($theme_query, $schedule_1);
                 })
-             ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
+            ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
+            ->whereNotIn('id', $choosed_mabuhay_id ) // where not selected in Business Counter
             ->whereNotIn('id', $on_leave_today ) // where not on leave today
 
             
@@ -443,6 +495,7 @@ class DomesticCounter extends Controller
                     ->orWhere($theme_query, $schedule_1);
                 }) 
              ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
+             ->whereNotIn('id', $choosed_mabuhay_id ) // where not selected in Business Counter
              ->whereNotIn('id', $on_leave_today ) // where not on leave today
             
 
@@ -460,55 +513,6 @@ class DomesticCounter extends Controller
         /**** end CSA senior counter ****/
 
 
-
-        /*
-        *
-        * @return mabuhay COUNTER Randomize Query.
-        */
-
-        //@retrieve Domestic csa Counter List from DB.
-        $mabuhay_counter_array_list = counter_list::find(4)->counter; // domestic csa-senior.
-        $mabuhay_counter_array_list = explode(',', $mabuhay_counter_array_list); // explode list to array.
-
-            //convert to collect to count counter list array of dom counter
-       $mabuhay_collection = collect($mabuhay_counter_array_list);
-       $mabuhay_counter_limit = $mabuhay_collection->count();
-       
-            // CSA Query with Level
-       $mabuhay = employees::where('cntr_ml','=',1)
-            ->where('cntr_cnt_asg','=',0)
-            ->where('rd1','<>',$day_num_now) // where not restday today
-            ->where('rd2','<>',$day_num_now) // where not restday today
-            ->where('cntr_int_only','=',0) // assigned to international only
-            ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
-            ->whereNotIn('id', $on_leave_today ) // where not on leave today
-            ->where($theme_query,'=',$schedule)
-            
-            ->orwhere($theme_query,'=',$schedule_1)
-            ->where('cntr_ml','=',1)
-            ->where('cntr_cnt_asg','=',0)
-            ->where('rd1','<>',$day_num_now) // where not restday today
-            ->where('rd2','<>',$day_num_now) // where not restday today
-            ->where('cntr_int_only','=',0) // assigned to international only
-            ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
-            ->whereNotIn('id', $on_leave_today ) // where not on leave today
-            
-            ->orderByRaw("RAND()")
-            ->limit( $mabuhay_counter_limit) //defends on available counter
-
-            ->get();
-
-            //@return CSA Query row Count.
-        $mabuhay_row_cnt = $mabuhay->count();
-
-            //@return csa counter list.
-        $chunk_mabuhay =  collect( $mabuhay_counter_array_list )->take($mabuhay_row_cnt);
-        $available_counter_for_mabuhay = $chunk_mabuhay->all();
-
-        /**** end mabuhay lounge counter ****/
-
-
-   
 
         //@return add to logs.
         $this->logs('Random Domestic Counter For : ' . $date );

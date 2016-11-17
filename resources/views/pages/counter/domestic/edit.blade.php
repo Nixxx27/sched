@@ -30,7 +30,7 @@
                       </select> -->
 
 
-                       <select id="unassigned_emp" name="unassigned_emp" class="input-control select" onChange="new_name()">
+                       <select id="emp_id" name="emp_id" class="input-control select" onChange="new_name()">
                           <option value="{{ $dom_counter->emp_id }}">{{ ucwords($dom_counter->emp_id) }}</option>
                           @foreach( $unassigned_csa as $unassigned)
                               <option value="{{ $unassigned->name }}">{{ strtoupper($unassigned->name) }}</option>
