@@ -133,6 +133,12 @@ Route::group(['middleware' => 'web'], function () {
     */
     Route::resource('leave', 'LeaveController');
 
+     /*
+    * @return Reliever Controller
+    */
+    Route::resource('reliever', 'RelieverController');
+
+
     /*
     * @return Level Controller
     */

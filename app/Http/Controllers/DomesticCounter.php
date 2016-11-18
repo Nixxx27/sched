@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -11,6 +10,7 @@ use App\dom_counter;
 use App\dom_counter_sched;
 use App\counter_list;
 use Carbon\Carbon;
+use App\reliever;
 use App\schedule;
 use App\season;
 use App\leaves;
@@ -269,6 +269,7 @@ class DomesticCounter extends Controller
         $level = $request['level_dom'];
 
 
+
         // query if level 1 is check
         $where1 =( $request['dom_counter_level_1'] ==1) ? 1 : 0 ;
         // query if level 2 is check
@@ -286,11 +287,18 @@ class DomesticCounter extends Controller
 
         // Return all leaves on selected Date
 
-      $on_leave_today = leaves::where('date', '=', $date)->lists('emp_id');
+        $reliever_today  = reliever::where('date', '=', $date)
+        ->lists('name');
+
+        //$reliever_today = [1,3,4,357,358];
+       
+        $on_leave_today = leaves::where('date', '=', $date)
+        ->whereNotIn('emp_id', $reliever_today) //overwrite leave if he is reliever
+        ->lists('emp_id');
 
 
-       //@return Supervisor Randomize Query limit 4.
-        $sup = employees::where('rank','=','supervisor')
+        //@return Supervisor Randomize Query limit 4.
+         $sup = employees::where('rank','=','supervisor')
             ->whereNotIn('id', $on_leave_today ) // where not on leave today
             ->where('cntr_cnt_asg','=',0)
             ->where('rd1','<>',$day_num_now) // where not restday today
@@ -306,9 +314,16 @@ class DomesticCounter extends Controller
                 ->where('rd2','<>',$day_num_now) // where not restday today
                 ->where($theme_query, $schedule_2) // supervisors schedule
 
+            //if he/she is reliever today
+            ->orWhereIn('name',$reliever_today) // where he is a reliever
+                ->where('rank','=','supervisor')
+                ->where('cntr_cnt_asg','=',0)
+                ->where($theme_query, $schedule_2) // supervisors schedule
+
             ->orderByRaw("RAND()")
             ->limit(4)
             ->get();
+
 
         //@return supervisor Query row Count.
         $sup_row_cnt = $sup->count();
@@ -354,6 +369,20 @@ class DomesticCounter extends Controller
             // ->whereNotIn('id', $choosed_csa_id ) // where not selected in CSA
             ->whereNotIn('id', $on_leave_today ) // where not on leave today
             
+
+            //if he/she is reliever today
+            ->orWhereIn('name',$reliever_today) // where he is a reliever
+                ->where('cntr_ml','=',1)
+                ->where('cntr_cnt_asg','=',0)
+                ->where('cntr_int_only','=',0) // assigned to international only
+                ->where($theme_query, $schedule_1) // supervisors schedule
+
+             ->orWhereIn('name',$reliever_today) // where he is a reliever
+                ->where('cntr_ml','=',1)
+                ->where('cntr_cnt_asg','=',0)
+                ->where('cntr_int_only','=',0) // assigned to international only
+                ->where($theme_query, $schedule) // supervisors schedule
+
             ->orderByRaw("RAND()")
             ->limit( $mabuhay_counter_limit); //defends on available counter
 
@@ -423,6 +452,35 @@ class DomesticCounter extends Controller
                     ->orWhere($theme_query, $schedule_1);
                 })
             ->whereNotIn('id', $choosed_mabuhay_id ) // where not selected in Business Counter
+
+            //if he/she is reliever today
+            ->orWhereIn('name',$reliever_today) // where he is a reliever
+                ->where('rank','=','csa1')
+                ->where('cntr_cnt_asg','=',0)
+                ->where('cntr_int_only','=',0) // assigned to international only
+                 ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
+                    $q->where($theme_query, $schedule)  
+                    ->orWhere($theme_query, $schedule_1);
+                })
+
+            ->orWhereIn('name',$reliever_today) // where he is a reliever
+                ->where('rank','=','csa2')
+                ->where('cntr_cnt_asg','=',0)
+                ->where('cntr_int_only','=',0) // assigned to international only
+                 ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
+                    $q->where($theme_query, $schedule)  
+                    ->orWhere($theme_query, $schedule_1);
+                })
+
+             ->orWhereIn('name',$reliever_today) // where he is a reliever
+                ->where('rank','=','csa3')
+                ->where('cntr_cnt_asg','=',0)
+                ->where('cntr_int_only','=',0) // assigned to international only
+                 ->where(function($q) use ($theme_query,$schedule,$schedule_1) { 
+                    $q->where($theme_query, $schedule)  
+                    ->orWhere($theme_query, $schedule_1);
+                })
+
 
              ->orderByRaw("RAND()")
             ->limit( $csa_counter_limit); //defends on available counter

@@ -59,9 +59,10 @@
                 <legend class="legend-style">Domestic</legend>
                 <li class='has-sub'><a href='#'><i class="fa fa-desktop nz-red" aria-hidden="true"></i> <span class="mif-ani-hover-heartbeat mif-ani-slow"> Counter</span></a>
                     <ul>
-                        <li><a href='{{ url('/domestic_counter') }}'><span><i class="fa fa-caret-right fg-red"></i> Check-in Counter </span></a></li>
-                        <li><a href='{{ url('/domestic_counter/view_counter_settings') }}'><span><i class="fa fa-caret-right fg-red"></i> Setup Counter</span></a></li>
+                        <li><a href='{{ url('/domestic_counter') }}'><span><i class="fa fa-caret-right fg-red"></i> View Counter Assignment </span></a></li>
+                        <li><a href='{{ url('/domestic_counter/view_counter_settings') }}'><span><i class="fa fa-caret-right fg-red"></i> Assign new Emp. to Counter</span></a></li>
                         <li><a href='{{ url('/counter_list') }}'><span><i class="fa fa-caret-right nz-red"></i> Counter Lists</span></a></li>
+                         <li><a href='{{ url('/reliever') }}'><span><i class="fa fa-caret-right nz-red"></i> Reliever Lists</span></a></li>
                     </ul>
                 </li>
                 <li class='has-sub'><a href='#'><i class="fa fa-calendar-o nz-red"></i> <span class="mif-ani-hover-heartbeat mif-ani-slow"> Gates</span></a>

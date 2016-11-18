@@ -156,9 +156,9 @@
                 <hr>
         <fieldset>
             <legend>Counter qualification:</legend>
-            <div class="checkbox" title="can be assigned to Mabuhay Lounge?">
+            <div class="checkbox" title="can be assigned to Business Class Counter?">
                 <label>
-                    <input type="checkbox" name="cntr_ml" value="1" {{ $employees->cntr_ml==1 ? 'checked' : '' }}> Mabuhay lounge
+                    <input type="checkbox" name="cntr_ml" value="1" {{ $employees->cntr_ml==1 ? 'checked' : '' }}> For Business Class Counter
                 </label>
             </div>
 

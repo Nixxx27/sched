@@ -98,6 +98,15 @@
                         <small> {{ $employee->w_schedule->timein->format('h:i A') }} - {{ $employee->w_schedule->timeout->format('h:i A') }} </small>
                     </td>
                 </tr>
+
+                <tr>
+                    <td class="details_td">Rest Day</td>
+                    <td style="padding:10px"> 
+                    <?php $dowMap = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursay', 'Friday', 'Saturday'); ?>
+                        {{ $dowMap[$employee->rd1] }}
+                        {!! ($employee->rd1=="")? "" : " & " .$dowMap[$employee->rd2] !!}
+                    </td>
+                </tr>
             </table>
 
             <hr>

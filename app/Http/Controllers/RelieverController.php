@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\employees;
+use App\reliever;
 
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\rank;
 
-class RankController extends Controller
+class RelieverController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +17,9 @@ class RankController extends Controller
      */
     public function index()
     {
-        $rank = rank::orderBy('id', 'desc')->paginate(10);
-        $rank->setPath('rank');
-        return  view('pages.rank.list',compact('rank') );
+        $reliever = reliever::orderBy('id', 'desc')->paginate(10);
+        $reliever->setPath('reliever');
+        return  view('pages.reliever.list',compact('reliever') );
     }
 
     /**
@@ -29,7 +29,8 @@ class RankController extends Controller
      */
     public function create()
     {
-        return  view('pages.rank.add');
+       $employees = employees::orderBy('name', 'asc')->get();
+        return  view('pages.reliever.add',compact('employees'));
     }
 
     /**
@@ -40,21 +41,21 @@ class RankController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request,
+       $this->validate($request,
             [
-                'rank' => 'required|min:2',
+                'date' => 'required|min:2',
+                'name'  => 'required|min:2',
             ]);
 
-       $rank = rank::create($request->all());
-       $this->logs('Add new rank ' .$rank->rank);
+       $reliever = reliever::create($request->all());
+       $this->logs('Add New Reliever  - Name: ' . $reliever->name . " Date : " . $reliever->date );
 
         return redirect('reliever')->with([
-            'flash_message' => "New Rank succesfully Added!"
+            'flash_message' => "New Reliever succesfully Added!"
         ]);
     }
 
-
-     /**
+    /**
      * Display the specified resource.
      *
      * @param  int  $id
@@ -73,8 +74,7 @@ class RankController extends Controller
      */
     public function edit($id)
     {
-        $rank = rank::findorfail($id);
-        return view('pages.rank.edit',compact('rank'));
+        //
     }
 
     /**
@@ -86,13 +86,7 @@ class RankController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $rank = rank::findorfail($id);
-        $this->logs('Update rank ' .$rank->rank ." to " . $request->rank );
-        $rank->update( $request->all() );
-
-        return redirect('rank')->with([
-            'flash_message' => 'Updated Successfully'
-        ]);
+        //
     }
 
     /**
@@ -103,16 +97,16 @@ class RankController extends Controller
      */
     public function destroy($id)
     {
-        $rank = rank::findorfail($id);
-        $this->logs("Delete " .$rank->rank );
-        $rank->delete();
+        $reliever = reliever::findorfail($id);
+        $this->logs("Delete " .$reliever->id );
+        $reliever->delete();
 
-        return redirect('rank')->with([
+        return redirect('reliever')->with([
             'flash_message' => 'Deleted Successfully'
         ]);
     }
 
-    /**
+     /**
      * @return Add Action performed to log file
      * @param $action
      */

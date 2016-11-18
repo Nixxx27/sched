@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDomCounterSchedTable extends Migration
+class CreateRelieverTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +12,11 @@ class CreateDomCounterSchedTable extends Migration
      */
     public function up()
     {
-        Schema::create('domestic_counter_scheds', function (Blueprint $table) {
+        Schema::create('reliever', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('date'); // date of counter assignment
-            $table->string('sched'); //schedules separated by comma
+            $table->string('emp_id'); // employee id
+            $table->string('name'); // date of reliever
+            $table->string('date'); // date of reliever
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ class CreateDomCounterSchedTable extends Migration
      */
     public function down()
     {
-        Schema::drop('domestic_counter_scheds');
+        Schema::drop('reliever');
     }
 }

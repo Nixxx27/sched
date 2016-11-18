@@ -26,10 +26,16 @@
             </a>
               @if($count !== 0)
              <a href='domestic_counter/unassigned/{{ $dt }}'>
-            <button class="button loading-pulse lighten info"  title="view unassigned Personnel">
-                 <span class="mif-arrow-up-right"></span> 
+                <button class="image-button primary" title="View Unassigned">
+                     <small> Unassigned </small>
+                    <span class="icon mif-arrow-up-right bg-darkCobalt"></span>
+                </button>
+               </a>
+            <button onclick='printDiv();' class="button info loading-pulse"  title="view unassigned Personnel">
+                 <span class="mif-printer"></span> 
             </button>
-            </a>
+     
+         
             @endif
         </div>
        <div class=" col-md-5 col-sm-5 col-xs-4 pull-right">
@@ -51,7 +57,7 @@
             </div>
         @endif
             @include('errors.list')
-
+<div id='DivIdToPrint'>
             <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped">
                             <thead>
@@ -99,6 +105,7 @@
                             @endif
                             </tbody>
                         </table>
+</div>
 
             
 <!-- Modal -->
@@ -138,6 +145,23 @@
         $(function(){
             $("#datepicker").datepicker();
         });
+
+        function printDiv() 
+            {
+
+              var divToPrint=document.getElementById('DivIdToPrint');
+
+              var newWin=window.open('','Print-Window');
+
+              newWin.document.open();
+
+              newWin.document.write('<html><body onload="window.print()">'+divToPrint.innerHTML+'</body></html>');
+
+              newWin.document.close();
+
+              setTimeout(function(){newWin.close();},10);
+
+            }
 
     </script>
 @endsection
