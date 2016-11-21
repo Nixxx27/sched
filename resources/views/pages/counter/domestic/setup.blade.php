@@ -62,12 +62,12 @@
 
 
                 {!! Form::open(array('url' => 'domestic_counter/counter_save')) !!}
-                <input type="text" name="schedule" value="{{ $schedule }}">
-                <input type="text" name="schedule_1" value="{{ $schedule_1 }}">
-                <input type="text" name="schedule_2" value="{{ $schedule_2 }}">
-                <input type="text" name="schedule_3" value="{{ $schedule_3 }}">
-                <input type="text" name="date" value="{{ $date }}">
-                <input type="text" name="shift" value="{{ $shift }}">
+                <input type="hidden" name="schedule" value="{{ $schedule }}">
+                <input type="hidden" name="schedule_1" value="{{ $schedule_1 }}">
+                <input type="hidden" name="schedule_2" value="{{ $schedule_2 }}">
+                <input type="hidden" name="schedule_3" value="{{ $schedule_3 }}">
+                <input type="hidden" name="date" value="{{ $date }}">
+                <input type="hidden" name="shift" value="{{ $shift }}">
                 <table class="table table-bordered table-hover table-striped">
                     <thead>
                         <tr>
@@ -85,10 +85,10 @@
                         @foreach ( $available_counter_for_sup as $sup_counter )
 
                             <tr>
-                                 <td>{{ $sup_counter }}  <input type="text" name="counter[]" value="{{ $sup_counter }}"></td>
-                                <td>  {{ strtoupper( $sup_name_array[ $z ] ) }}  <input type="text" name="emp_id[]" value="{{ $sup_name_array[ $z ] }}"></td>
+                                 <td>{{ $sup_counter }}  <input type="hidden" name="counter[]" value="{{ $sup_counter }}"></td>
+                                <td>  {{ strtoupper( $sup_name_array[ $z ] ) }}  <input type="hidden" name="emp_id[]" value="{{ $sup_name_array[ $z ] }}"></td>
                                 <td>{{ strtoupper( $sup_code_array[ $z ] ) }}
-                                    <input type="text" name="code[]" value="{{ $sup_code_array[ $z ] }}">
+                                    <input type="hidden" name="code[]" value="{{ $sup_code_array[ $z ] }}">
                                  </td>
 
                             </tr>
@@ -103,10 +103,10 @@
                         @foreach ( $available_counter_for_senior as $senior_counter )
 
                             <tr>
-                                 <td>{{ $senior_counter }}  <input type="text" name="counter[]" value="{{ $senior_counter }}"></td>
-                                <td>  {{ strtoupper( $senior_name_array[ $h ] )}} <input type="text" name="emp_id[]" value="{{ $senior_name_array[ $h ] }}"></td>
+                                 <td>{{ $senior_counter }}  <input type="hidden" name="counter[]" value="{{ $senior_counter }}"></td>
+                                <td>  {{ strtoupper( $senior_name_array[ $h ] )}} <input type="hidden" name="emp_id[]" value="{{ $senior_name_array[ $h ] }}"></td>
                                 <td>{{ strtoupper( $senior_code_array[ $h ] )}}
-                                    <input type="text" name="code[]" value="{{ $senior_code_array[ $h ] }}">
+                                    <input type="hidden" name="code[]" value="{{ $senior_code_array[ $h ] }}">
                                 </td>
                             </tr>
                     <?php $h++ ?>
@@ -121,10 +121,10 @@
                             <?php $c=1 //initiate number or table rows and column ?>
                             @foreach ( $available_counter_for_csa as $csa_counter )
                                 <tr>
-                                    <td>{{ $csa_counter }}  <input type="text" name="counter[]" value="{{ $csa_counter }}"></td>
-                                    <td>  {{ strtoupper( $csa_name_array[ $c ]) }} <input type="text" name="emp_id[]" value="{{ $csa_name_array[ $c ] }}"></td>
+                                    <td>{{ $csa_counter }}  <input type="hidden" name="counter[]" value="{{ $csa_counter }}"></td>
+                                    <td>  {{ strtoupper( $csa_name_array[ $c ]) }} <input type="hidden" name="emp_id[]" value="{{ $csa_name_array[ $c ] }}"></td>
                                     <td>{{ strtoupper( $csa_code_array[ $c ]) }} 
-                                        <input type="text" name="code[]" value="{{ $csa_code_array[ $c ] }}">
+                                        <input type="hidden" name="code[]" value="{{ $csa_code_array[ $c ] }}">
                                     </td>
                                 </tr>
                                 <?php $c++ ?>
@@ -139,10 +139,10 @@
                         @foreach ( $available_counter_for_mabuhay as $mabuhay_counter )
 
                             <tr>
-                                 <td>{{ $mabuhay_counter }}  <input type="text" name="counter[]" value="{{ $mabuhay_counter }}"></td>
-                                <td>  {{ strtoupper( $mabuhay_name_array[ $nn ] )}} <input type="text" name="emp_id[]" value="{{ $mabuhay_name_array[ $nn ] }}"></td>
+                                 <td>{{ $mabuhay_counter }}  <input type="hidden" name="counter[]" value="{{ $mabuhay_counter }}"></td>
+                                <td>  {{ strtoupper( $mabuhay_name_array[ $nn ] )}} <input type="hidden" name="emp_id[]" value="{{ $mabuhay_name_array[ $nn ] }}"></td>
                                 <td>{{ strtoupper( $mabuhay_code_array[ $nn ] )}}
-                                    <input type="text" name="code[]" value="{{ $mabuhay_code_array[ $nn ] }}">
+                                    <input type="hidden" name="code[]" value="{{ $mabuhay_code_array[ $nn ] }}">
                                 </td>
                             </tr>
                     <?php $nn++ ?>
