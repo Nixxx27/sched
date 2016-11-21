@@ -74,7 +74,7 @@
                        
                             <td>
                                 <div id="div_counter{{$i}}" style="display:none;">
-                                <input type="text" name="emp_code{{ $i }}"  id="emp_code{{ $i }}" value="{{ strtoupper( $available_csa->code ) }}">
+                                <input type="hidden" name="emp_code{{ $i }}"  id="emp_code{{ $i }}" value="{{ strtoupper( $available_csa->code ) }}">
                                 <input type="hidden" name="schedule{{ $i }}" id="schedule{{ $i }}" value="{{ $available_csa->winter_sched }}">
                                
                                 <select  name="morning_counter{{ $i }}" id="morning_counter{{ $i }}" onChange="fillShift(1,{{ $i }})">
