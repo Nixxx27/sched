@@ -41,6 +41,10 @@
         <div class="container">
             <div class="content">
                 <div class="title">Be right back.</div>
+                <h2>PSD Scheduling System</h2>
+                <h3><small>SkyLogistics Philippines Inc | Information & Communication Dept. &copy; 2016</small>
+                </h3>
+                <h5><small>by: Nikko Zabala</small></h5>
             </div>
         </div>
     </body>

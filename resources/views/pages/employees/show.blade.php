@@ -104,7 +104,7 @@
                     <td style="padding:10px"> 
                     <?php $dowMap = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursay', 'Friday', 'Saturday'); ?>
                         {{ $dowMap[$employee->rd1] }}
-                        {!! ($employee->rd1=="")? "" : " & " .$dowMap[$employee->rd2] !!}
+                        {!! ($employee->rd2=="")? "" : " & " .$dowMap[$employee->rd2] !!}
                     </td>
                 </tr>
             </table>
