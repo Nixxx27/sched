@@ -80,24 +80,37 @@
 
                 <tr>
                     <td><i class="fa fa-user" aria-hidden="true"></i> Supervisors Schedule:</td>
-                    <td colspan="2">
+                    <td>
                         <select id="schedule_2" name="schedule_2" class="input-control select">
                             <option value=""></option>
                             @foreach( $schedule as $sched)
                                 <option value="{{ $sched->id }}">{{ $sched->sched_num }}</option>
                             @endforeach
                         </select>
+
+                    </td>
+                    <td>
+                        <select id="schedule_3" name="schedule_3" class="input-control select">
+                            <option value=""></option>
+                            @foreach( $schedule as $sched)
+                                <option value="{{ $sched->id }}">{{ $sched->sched_num }}</option>
+                            @endforeach
+                        </select>
+                        
                     </td>
                 </tr>
                 <tr>
                     <td><i class="fa fa-users" aria-hidden="true"></i> CSA Schedules:</td>
-                    <td colspan="2">
+                    <td>
                         <select id="schedule" name="schedule" class="input-control select">
                             <option value=""></option>
                             @foreach( $schedule as $sched)
                                 <option value="{{ $sched->id }}">{{ $sched->sched_num }}</option>
                             @endforeach
                         </select>
+                    </td>
+                    <td>
+
                         <select id="schedule_1" name="schedule_1" class="input-control select">
                             <option value=""></option>
                             @foreach( $schedule as $sched)

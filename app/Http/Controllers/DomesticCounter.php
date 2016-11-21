@@ -264,11 +264,10 @@ class DomesticCounter extends Controller
         $schedule = $request['schedule'];
         $schedule_1 =$request['schedule_1'];
         $schedule_2 = $request['schedule_2']; //supervisor schedule
+        $schedule_3 = $request['schedule_3']; //supervisor schedule 2
         $date =  $request['date'];
         $shift = $request['shift'];
         $level = $request['level_dom'];
-
-
 
         // query if level 1 is check
         $where1 =( $request['dom_counter_level_1'] ==1) ? 1 : 0 ;
@@ -291,11 +290,9 @@ class DomesticCounter extends Controller
         ->lists('name');
 
         //$reliever_today = [1,3,4,357,358];
-       
-        $on_leave_today = leaves::where('date', '=', $date)
+       $on_leave_today = leaves::where('date', '=', $date)
         ->whereNotIn('emp_id', $reliever_today) //overwrite leave if he is reliever
         ->lists('emp_id');
-
 
         //@return Supervisor Randomize Query limit 4.
          $sup = employees::where('rank','=','supervisor')
@@ -304,7 +301,10 @@ class DomesticCounter extends Controller
             ->where('rd1','<>',$day_num_now) // where not restday today
             ->where('rd2','<>',$day_num_now) // where not restday today
             ->where('cntr_int_only','=',0) // assigned to international only
-            ->where($theme_query, $schedule_2) // supervisors schedule
+            ->where(function($q) use ($theme_query,$schedule_2,$schedule_3) {
+                $q->where($theme_query, $schedule_2)     // return two sup chosen schedules
+                ->orWhere($theme_query, $schedule_3);
+            })
            
 
             ->orwhere('rank','=','supervisors')
@@ -312,13 +312,21 @@ class DomesticCounter extends Controller
                 ->where('cntr_cnt_asg','=',0)
                 ->where('rd1','<>',$day_num_now) // where not restday today
                 ->where('rd2','<>',$day_num_now) // where not restday today
-                ->where($theme_query, $schedule_2) // supervisors schedule
+            ->where(function($q) use ($theme_query,$schedule_2,$schedule_3) {
+                $q->where($theme_query, $schedule_2)     // return two sup chosen schedules
+                ->orWhere($theme_query, $schedule_3);
+            })
+           
 
             //if he/she is reliever today
             ->orWhereIn('name',$reliever_today) // where he is a reliever
                 ->where('rank','=','supervisor')
                 ->where('cntr_cnt_asg','=',0)
-                ->where($theme_query, $schedule_2) // supervisors schedule
+            ->where(function($q) use ($theme_query,$schedule_2,$schedule_3) {
+                $q->where($theme_query, $schedule_2)     // return two sup chosen schedules
+                ->orWhere($theme_query, $schedule_3);
+            })
+           
 
             ->orderByRaw("RAND()")
             ->limit(4)
@@ -577,7 +585,7 @@ class DomesticCounter extends Controller
 
             //@return view with variables.
         return view('pages.counter.domestic.setup',compact(
-            'schedule','schedule_1','schedule_2','date','shift',
+            'schedule','schedule_1','schedule_2','schedule_3','date','shift',
             'sup','sup_row_cnt','available_counter_for_sup',
             'csa','csa_row_cnt','available_counter_for_csa',
             'senior','senior_row_cnt','available_counter_for_senior',
@@ -596,6 +604,7 @@ class DomesticCounter extends Controller
         $schedule =     $request['schedule'];
         $schedule_1=    $request['schedule_1'];
         $schedule_2 =   $request['schedule_2'];
+        $schedule_3 =   $request['schedule_3'];
         $date=          $request['date'];
             
            
@@ -624,6 +633,7 @@ class DomesticCounter extends Controller
                     // add counter date and employees schedule to db
 
                     $schedule_1 = ( empty( $schedule_1 ))? " " : "," . $schedule_1;
+                    $schedule_3 = ( empty( $schedule_3 ))? " " : "," . $schedule_3;
                     
                     $dom_counter_sched_count =  dom_counter_sched::where('date',$date)->count();
 
@@ -631,7 +641,7 @@ class DomesticCounter extends Controller
                     {
                         $update_dom_counter_sched = dom_counter_sched::where('date',$date)->first();
                         $update_dom_counter_sched->update([
-                                'sched' =>   $update_dom_counter_sched->sched . ",". $schedule . "," . $schedule_2 . $schedule_1
+                                'sched' =>   $update_dom_counter_sched->sched . ",". $schedule . "," . $schedule_2 . $schedule_1 . $schedule_3
                                 ]);
                             $update_dom_counter_sched->save();
                     }else
@@ -639,7 +649,7 @@ class DomesticCounter extends Controller
                         dom_counter_sched::where('date',$date)->get();
                         $dom_counter_sched = dom_counter_sched::firstorCreate([
                         'date' => $request['date'],
-                        'sched' => $schedule . "," . $schedule_2 . $schedule_1
+                        'sched' => $schedule . "," . $schedule_2 . $schedule_1 . $schedule_3
                         ]);
 
                         $dom_counter_sched->save();
