@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDomCounterSched extends Migration
+class CreateDomCounterSchedTable extends Migration
 {
     /**
      * Run the migrations.
