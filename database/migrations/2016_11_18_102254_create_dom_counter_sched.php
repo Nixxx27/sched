@@ -15,7 +15,7 @@ class CreateDomCounterSchedTable extends Migration
         Schema::create('domestic_counter_scheds', function (Blueprint $table) {
             $table->increments('id');
             $table->string('date'); // date of counter assignment
-            $table->string('sched'); //schedules separated by comma
+            $table->string('sched'); //schedules separated by ,
             $table->timestamps();
         });
     }
