@@ -30,21 +30,23 @@
             <div class="example" data-text="">
 
             <div style="display:none">
+         
             {!! Form::open(array('name'=>'unassigned_emp','id'=>'unassigned_emp','url' => 'add_to_counter_unassigned')) !!}
             <table>
                 <tr>
-                    <td> <input type="text" readonly  name="emp_id" id="emp_id">
-                        <input type="text" readonly name="date" value="{{ $date }}" >
-                        <input type="text" readonly name="schedule" id="schedule">
+                    <td> 
+                    <input type="hidden" readonly  name="emp_code" id="emp_code" value="code">
+                    <input type="hidden" readonly name="date" value="{{ $date }}" >
+                    <input type="hidden" readonly name="schedule" id="schedule">
                     </td>
 
                 </tr>
                 <tr>
-                    <td> <input type="text" readonly name="counter" id="counter"></td>
+                    <td> <input type="hidden" readonly name="counter" id="counter"></td>
                 </tr>
                 <tr>
-                    <td><input type="text" readonly name="x_shift" id="x_shift">
-                     <input type="text"  readonly name="shift" id="shift"></td>
+                    <td><input type="hidden" readonly name="x_shift" id="x_shift">
+                     <input type="hidden"  readonly name="shift" id="shift"></td>
                 </tr>
 
             </table>
@@ -72,7 +74,7 @@
                        
                             <td>
                                 <div id="div_counter{{$i}}" style="display:none;">
-                                <input type="hidden" name="emp_id{{ $i }}"  id="emp_id{{ $i }}" value="{{ strtoupper( $available_csa->name ) }}">
+                                <input type="text" name="emp_code{{ $i }}"  id="emp_code{{ $i }}" value="{{ strtoupper( $available_csa->code ) }}">
                                 <input type="hidden" name="schedule{{ $i }}" id="schedule{{ $i }}" value="{{ $available_csa->winter_sched }}">
                                
                                 <select  name="morning_counter{{ $i }}" id="morning_counter{{ $i }}" onChange="fillShift(1,{{ $i }})">
@@ -117,11 +119,11 @@
                 $('#afternoon_counter'+cntr_num).val('');
                 
                 var cntr    =$('#morning_counter'+cntr_num).val();
-                var e_name    =$('#emp_id'+cntr_num).val();
+                var e_code    =$('#emp_code'+cntr_num).val();
                 var e_sched    =$('#schedule'+cntr_num).val();
                 console.log(e_sched);
                 $('#counter').val(cntr);        
-                $('#emp_id').val(e_name);  
+                $('#emp_code').val(e_code);  
                 $('#schedule').val(e_sched);
                 $('#shift').val(1); 
                 $('#x_shift').val('Morning'); 
@@ -130,11 +132,11 @@
                 $('#morning_counter'+cntr_num).val('');
                 
                 var cntr    =$('#afternoon_counter'+cntr_num).val();
-                var e_name    =$('#emp_id'+cntr_num).val();
+                var e_code    =$('#emp_code'+cntr_num).val();
                 var e_sched    =$('#schedule'+cntr_num).val();
                 console.log(e_sched);
                 $('#counter').val(cntr);        
-                $('#emp_id').val(e_name);  
+                $('#emp_code').val(e_code);  
                 $('#schedule').val(e_sched);
                 $('#shift').val(2); 
                 $('#x_shift').val('Afternoon');     

@@ -77,7 +77,7 @@ class DomesticCounter extends Controller
         $this->validate($request,
             [
                 'counter' => 'required',
-                'emp_id' => 'required',
+                'emp_code' => 'required',
                 'date' => 'required',
                 'shift' => 'required',
             ],
@@ -173,20 +173,20 @@ class DomesticCounter extends Controller
     {
         $this->validate($request,
             [
-                'emp_id' => 'required',
+                'emp_code' => 'required',
                 'remarks' => 'required',
             ],
-            $messages = array('emp_id.required' => 'The employee field is required')
+            $messages = array('emp_code.required' => 'The Employee Code is required')
         );
 
 
         //FOR remarks
-        $previous_remarks = dom_counter::where('emp_id','=',$request['curr_emp'])
+        $previous_remarks = dom_counter::where('emp_code','=',$request['curr_emp'])
             ->where("date","=",$request['assign_date'])->first();
 
         $new_remarks = $previous_remarks->remarks . "\r\n" . "\r\n" . "=================" . "\r\n" .
         \Auth::user()->name . " updated CTR#" . $request['log_counter'] . " " . carbon::now() . "\r\n" .
-         "From ". $request['curr_emp'] . " to " . $request['emp_id'] . "\r\n" . "\r\n" .
+         "From ". $request['curr_emp'] . " to " . $request['emp_code'] . "\r\n" . "\r\n" .
             $request['remarks'] ;
 
         $request['remarks'] = $new_remarks;
@@ -623,6 +623,7 @@ class DomesticCounter extends Controller
                         dom_counter::firstorCreate([
                            'counter' => $request->counter[$i],
                            'emp_id' => $emp_id,
+                           'emp_code'   => $request->code[$i],
                            'shift' => $request['shift'],
                            'schedule' => $request['schedule'],
                            'date' => $request['date']
@@ -769,7 +770,7 @@ class DomesticCounter extends Controller
         $this->validate($request,
             [
                 'counter' => 'required',
-                'emp_id' => 'required',
+                'emp_code' => 'required',
                 'date' => 'required',
                 'schedule' => 'required',
                 'shift' => 'required',
@@ -777,7 +778,7 @@ class DomesticCounter extends Controller
             $messages = array('emp_id.required' => 'The employee field is required')
         );
 
-        $exist = dom_counter::where("emp_id", "=", $request['emp_id']) //check if duplicate
+        $exist = dom_counter::where("emp_code", "=", $request['emp_code']) //check if duplicate
             ->where("date", "=", $request['date'])
             ->where("shift", "=", $request['shift'])
 
@@ -788,14 +789,14 @@ class DomesticCounter extends Controller
 
         if ($exist > 0)
         {
-            $this->logs('Failed to manually assign from unassigned list :'. $request['emp_id'] . ' to Counter : ' .$request['counter'] . ' For date : '. $request['date']);
+            $this->logs('Failed to manually assign from unassigned list :'. $request['emp_code'] . ' to Counter : ' .$request['counter'] . ' For date : '. $request['date']);
             return back()->withErrors(["There is alreasy assigned Personnel"]);
         }else
         {
             dom_counter::create($request->all());
-            $this->logs('Manually assign from unassigned list :'. $request['emp_id'] . ' to Counter : ' .$request['counter'] . ' For date : '. $request['date']);
+            $this->logs('Manually assign from unassigned list :'. $request['emp_code'] . ' to Counter : ' .$request['counter'] . ' For date : '. $request['date']);
             return back()->with([
-            'flash_message' => $request['emp_id'] ." successfully assigned to counter " . $request['counter'] ]);
+            'flash_message' => $request['emp_code'] ." successfully assigned to counter " . $request['counter'] ]);
 
         }
 

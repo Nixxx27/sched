@@ -37,10 +37,10 @@
                         <tr>
                             <td><label for="emp_id">Employee</label></td>
                             <td>
-                                <select name="emp_id" id="emp_id" class="input-control select">
+                                <select name="emp_code" id="emp_code" class="input-control select">
                                     <option value="" >Select Employee</option>
                                     @foreach($employees as $employee)
-                                        <option value="{{ $employee->name }}">{{ strtoupper($employee->name) }}</option>
+                                        <option value="{{ $employee->code }}">{{ strtoupper($employee->code) }}</option>
                                     @endforeach
                                 </select>
                             </td>

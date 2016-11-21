@@ -5,6 +5,15 @@
         #main_table_demo th{
             text-align: center;
         }
+        .code-class
+        {
+            
+        }
+        .code-class:hover
+        {
+            color:#CE352C;
+            text-decoration: underline;
+        }
     </style>
 @endsection
 @section('content')
@@ -49,7 +58,7 @@
         </div>
     </div>
     <hr class="bg-red">
-    <div class="col-md-12 col-sm-12">
+    <div class="col-md-offset-1 col-md-9 col-sm-offset-1 col-sm-9">
         @if(Session::has('flash_message'))
             <div class="alert alert-success">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -66,7 +75,8 @@
                             </tr>
                             <tr>
                                 <td>Counter #</td>
-                                <td>Employee Name</td>
+                            <!--     <td>Employee Name</td> -->
+                                <td>Code</td>
                                 <td>Shift </td>
                                 <td></td>
                             </tr>
@@ -81,11 +91,15 @@
                                 @foreach($dom_counter as $counter)
                                     <tr>
                                         <td style="text-align:center"><i class="fa fa-desktop fa2x" aria-hidden="true"></i> <span style="font-weight:bold;font-size:20px">{{ $counter->counter  }}</span></td>
-                                        <td >{{ strtoupper( $counter->emp_id )}}<!--this is emp name-->
-                                            
-                                            @if (!empty( $counter->remarks ))
+                                      <!--   <td >{{ strtoupper( $counter->emp_id )}}</td> -->
+                                        <td style="text-align:center;font-weight:bold;">
+                                        <span class="code-class" style="cursor:pointer;" title="Search {{$counter->emp_code}} Details" onclick="window.location.href='employees?season=&search={{$counter->emp_code}}'">         {{ strtoupper( $counter->emp_code )}}</span>
+                             
+
+                                        @if (!empty( $counter->remarks ))
                                                 <sup  data-toggle="modal" data-target="#{{$counter->id}}-modal" style="background-color:#5cb85c;color:#fff;display:inline;padding:.2em .6em .3em;font-size:75%;line-height: 1;text-align:center;border-radius: .25em;cursor:pointer">updated</sup>
                                             @endif
+
                                         </td>
 
                                             @if( $counter->shift == 1)
