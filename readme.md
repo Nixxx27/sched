@@ -2,10 +2,9 @@
 
 PSD Scheduling System for automated employee assignment.
 
-## Official Documentation
+## Systems Developer / Programmer
 
-Documentation for the framework can be found on the [NIkko Zabala](http://Nikkozabala.com).
-
+Visit Me at [Nikko Zabala](http://Nikkozabala.com).
 
 ### License
 

@@ -19,11 +19,13 @@
 @section('content')
     <!-- Page Heading -->
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-8">
             <h2 class="page-header">
                 <img src="{{ url('/public/images/pc1.gif') }}"> Domestic Counter <small></small>
             </h2>
         </div>
+        @include('partials.greetings')
+     
     </div>
     <!-- /.row -->
     <div class="row">
