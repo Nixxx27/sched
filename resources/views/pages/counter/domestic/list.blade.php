@@ -19,14 +19,45 @@
 @section('content')
     <!-- Page Heading -->
     <div class="row">
-        <div class="col-lg-8">
+        <div class="col-lg-6">
             <h2 class="page-header">
                 <img src="{{ url('/public/images/pc1.gif') }}"> Domestic Counter <small></small>
             </h2>
         </div>
         @include('partials.greetings')
-     
     </div>
+    <div class="row" >
+        <div class="col-md-5 col-sm-5 pull-right" style="margin-bottom:2px;cursor:pointer"  >
+            <h5 onclick="slideQuick()"><strong>Quick Links: <i class="fa fa-external-link-square" aria-hidden="true"></i></strong></h5>
+            <div style="display:none;" id="quicklinks">
+            <?php  $d_now=date('M-d') ?>
+            <?php  $d_now_w=date('Y-m-d') ?>
+
+             <?php $minus = date('Y-m-d', strtotime($d_now_w . ' -2 day')); ?>  
+            <a href="domestic_counter?date={{ $minus }}" class="counter-quick-links">   
+                <?php echo $b_date = date('M-d', strtotime($d_now . ' -2 day')); ?>
+            </a> |
+            <?php $minus = date('Y-m-d', strtotime($d_now_w . ' -1 day')); ?>  
+            <a href="domestic_counter?date={{ $minus }}" class="counter-quick-links">   
+                <?php echo $b_date = date('M-d', strtotime($d_now . ' -1 day')); ?>
+            </a> |
+
+            <a href="domestic_counter?date={{ date('Y-m-d') }}" style="color:#16b2ce;font-weight:bold;font-size:90%">{{ date('M-d') }}</a> |
+
+            <?php $add = date('Y-m-d', strtotime($d_now_w . ' +1 day')); ?>  
+            <a href="domestic_counter?date={{ $add }}" class="counter-quick-links">   
+                <?php echo $c_date = date('M-d', strtotime($d_now . ' +1 day')); ?>
+            </a> |
+
+             <?php $add = date('Y-m-d', strtotime($d_now_w . ' +2 day')); ?>  
+            <a href="domestic_counter?date={{ $add }}" class="counter-quick-links">   
+                <?php echo $c_date = date('M-d', strtotime($d_now . ' +2 day')); ?>
+            </a>
+            </div>
+        </div>
+
+    </div>
+
     <!-- /.row -->
     <div class="row">
         <div class="col-md-4">
@@ -185,6 +216,10 @@
 
             }
 
+        function slideQuick(){
+            $('#quicklinks').slideToggle();
+        }
+        
     </script>
 @endsection
 

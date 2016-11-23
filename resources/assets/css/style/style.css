@@ -134,3 +134,19 @@
     -webkit-border-radius: 30px; 
     -moz-border-radius: 30px; 
 }
+
+
+
+/* Domestic Counter List */
+
+.counter-quick-links
+{
+  color:#00356A !important;
+  font-weight:bold;
+  font-size:85%;
+  display:inline;
+  line-height: 1;
+  text-align: center;  
+  margin-right:2px;
+  text-decoration: none;
+}
