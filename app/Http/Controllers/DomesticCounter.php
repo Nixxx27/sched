@@ -130,7 +130,7 @@ class DomesticCounter extends Controller
         $theme_query = ($season->theme =='winter')? "winter_sched" : "summer_sched";
 
         //@return assigned employees on the requested date
-        $view_personnel_on_that_date = dom_counter::where("date","=",$date)->lists('emp_id');
+       $view_personnel_on_that_date = dom_counter::where("date","=",$date)->lists('emp_code');
      //   $view_personnel_on_that_date = explode(' ', $view_personnel_on_that_date); // explode list to array. --not included
                 
         //@return scheduled selected on the requested date
@@ -139,21 +139,21 @@ class DomesticCounter extends Controller
         $dom_counter_sched = explode(',', $dom_counter_sched); // explode list to array.
 
             $unassigned_csa = employees::whereIn($theme_query,$dom_counter_sched)
-                ->whereNotIn('name',$view_personnel_on_that_date)
+                ->whereNotIn('code',$view_personnel_on_that_date)
                 ->where('rank','=','CSA1')
                 ->orwhere('rank','=','CSA2')
                     ->whereIn($theme_query,$dom_counter_sched)
-                     ->whereNotIn('name',$view_personnel_on_that_date)
+                     ->whereNotIn('code',$view_personnel_on_that_date)
                 ->orwhere('rank','=','CSA3')
                     ->whereIn($theme_query,$dom_counter_sched)
-                    ->whereNotIn('name',$view_personnel_on_that_date)
+                    ->whereNotIn('code',$view_personnel_on_that_date)
                 ->orwhere('rank','=','SUPERVISOR')
                     ->whereIn($theme_query,$dom_counter_sched)
-                    ->whereNotIn('name',$view_personnel_on_that_date)
+                    ->whereNotIn('code',$view_personnel_on_that_date)
                 ->orwhere('rank','=','SUPERVISORS')
                     ->whereIn($theme_query,$dom_counter_sched)
-                    ->whereNotIn('name',$view_personnel_on_that_date)
-                ->orderBy('name')
+                    ->whereNotIn('code',$view_personnel_on_that_date)
+                ->orderBy('code')
                 ->get();
 
 
@@ -210,6 +210,100 @@ class DomesticCounter extends Controller
                 'flash_message' => 'Updated Counter' . $request['counter_num'] . ' Successfully '
             ]);
         }
+    }
+
+
+    public function edit_counter_assignment($code,$date,$shift,$current_counter)
+    {
+
+        $dom_csa = counter_list::find(1)->counter; //$dom csa.
+        $dom_csa = explode(',', $dom_csa);
+
+        $dom_sup = counter_list::find(2)->counter; //$dom csa.
+        $dom_sup = explode(',', $dom_sup);
+
+        $csa_senior = counter_list::find(3)->counter; //$dom csa.
+        $csa_senior = explode(',', $csa_senior);
+
+        $mabuhay = counter_list::find(4)->counter; //$dom csa.
+       $mabuhay = explode(',', $mabuhay);
+
+        //merge all counters
+         $dom_counters = array_merge($dom_csa, $dom_sup,$csa_senior,$mabuhay);
+         
+        //@return counter on the requested date for morning shift
+        $view_counter_on_that_date_morning = dom_counter::where("date","=",$date)->where('shift',1)->lists('counter');
+        $view_counter_on_that_date_morning_count =  $view_counter_on_that_date_morning->count();
+        
+        if ( $view_counter_on_that_date_morning_count > 0)
+        {   
+            $view_counter_on_that_date_morning =  $view_counter_on_that_date_morning->toArray();
+            $dom_counters_morning = array_diff($dom_counters,$view_counter_on_that_date_morning);
+        }else
+        {
+            $dom_counters_morning = [];
+        }
+
+        //@return counter on the requested date for afternoon shift
+        $view_counter_on_that_date_afternoon = dom_counter::where("date","=",$date)->where('shift',2)->lists('counter');
+        $view_counter_on_that_date_afternoon_count =  $view_counter_on_that_date_afternoon->count();
+        
+        if (  $view_counter_on_that_date_afternoon_count > 0)
+        {
+            $view_counter_on_that_date_afternoon =  $view_counter_on_that_date_afternoon->toArray();
+            $dom_counters_afternoon = array_diff($dom_counters,$view_counter_on_that_date_afternoon);
+        }else
+        {
+            $dom_counters_afternoon = [];
+        }
+
+
+        if($shift==1)
+        {
+            $counters = $dom_counters_morning;
+        }else
+        {
+            $counters = $dom_counters_afternoon;
+        }
+
+        
+        return view('pages.counter.domestic.change_counter',compact('counters','code','date','current_counter','shift') );
+    }
+
+    public function save_new_counter(Request $request)
+    {
+        $this->validate($request,
+            [
+                'counter' => 'required',
+                'emp_code' => 'required',
+                'date' => 'required',
+                'remarks'   => 'required',
+                'shift' => 'required',
+           ],
+            $messages = array('emp_id.required' => 'The employee field is required')
+        );
+
+        //FOR remarks
+        $previous_remarks = dom_counter::where('emp_code','=',$request['emp_code'])
+            ->where("date","=",$request['date'])->first();
+
+        $new_remarks = $previous_remarks->remarks . "\r\n" . "\r\n" . "=================" . "\r\n" .
+        \Auth::user()->name . " Reassigned Counter of " . $request['emp_code'] . " " . carbon::now() . "\r\n" .
+         "From ". $request['current_counter'] . " to " . $request['counter'] . "\r\n" . "\r\n" .
+            $request['remarks'] ;
+
+        $request['remarks'] = $new_remarks;
+
+
+        $update_emp_counter = dom_counter::where('date',$request->date)
+            ->where('emp_code',$request->emp_code)
+            ->where('shift',$request->shift)
+            ->first();
+        $update_emp_counter->update(['counter' =>   $request->counter,'remarks'=> $request['remarks'] ]);
+        $update_emp_counter->save();
+
+        $this->logs('Update Counter assignment for :'. $request['emp_code'] . ' to Counter : ' .$request['counter'] . ' For date : '. $request['date'] . " shift " . $request['shift']);
+            return redirect('domestic_counter')->with(['flash_message' => $request->emp_code ." Successfully transfered to counter # " . $request->counter]);
     }
 
     /**
@@ -688,7 +782,7 @@ class DomesticCounter extends Controller
         $theme_query = ($season->theme =='winter')? "winter_sched" : "summer_sched";
 
         //@return assigned employees on the requested date
-        $view_personnel_on_that_date = dom_counter::where("date","=",$date)->lists('emp_id');
+       $view_personnel_on_that_date = dom_counter::where("date","=",$date)->lists('emp_code');
      //   $view_personnel_on_that_date = explode(' ', $view_personnel_on_that_date); // explode list to array. --not included
                 
         //@return scheduled selected on the requested date
@@ -697,20 +791,20 @@ class DomesticCounter extends Controller
         $dom_counter_sched = explode(',', $dom_counter_sched); // explode list to array.
 
             $unassigned_csa = employees::whereIn($theme_query,$dom_counter_sched)
-                ->whereNotIn('name',$view_personnel_on_that_date)
+                ->whereNotIn('code',$view_personnel_on_that_date)
                 ->where('rank','=','CSA1')
                 ->orwhere('rank','=','CSA2')
                     ->whereIn($theme_query,$dom_counter_sched)
-                     ->whereNotIn('name',$view_personnel_on_that_date)
+                     ->whereNotIn('code',$view_personnel_on_that_date)
                 ->orwhere('rank','=','CSA3')
                     ->whereIn($theme_query,$dom_counter_sched)
-                    ->whereNotIn('name',$view_personnel_on_that_date)
+                    ->whereNotIn('code',$view_personnel_on_that_date)
                 ->orwhere('rank','=','SUPERVISOR')
                     ->whereIn($theme_query,$dom_counter_sched)
-                    ->whereNotIn('name',$view_personnel_on_that_date)
+                    ->whereNotIn('code',$view_personnel_on_that_date)
                 ->orwhere('rank','=','SUPERVISORS')
                     ->whereIn($theme_query,$dom_counter_sched)
-                    ->whereNotIn('name',$view_personnel_on_that_date)
+                    ->whereNotIn('code',$view_personnel_on_that_date)
                 ->orderBy($theme_query)
                 ->get();
 

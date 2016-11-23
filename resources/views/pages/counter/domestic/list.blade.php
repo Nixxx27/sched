@@ -71,14 +71,14 @@
                         <table class="table table-bordered table-hover table-striped">
                             <thead>
                             <tr>
-                                <td colspan="4" style="text-align: center"><h4><strong> Employees Assigned for {{ $dt }} </strong></h4> </td>
+                                <td colspan="5" style="text-align: center"><h4><strong> Employees Assigned for {{ $dt }} </strong></h4> </td>
                             </tr>
                             <tr>
                                 <td>Counter #</td>
                             <!--     <td>Employee Name</td> -->
                                 <td>Code</td>
                                 <td>Shift </td>
-                                <td></td>
+                                <td colspan="2"></td>
                             </tr>
                             </thead>
                             <tbody>
@@ -108,10 +108,16 @@
                                             <td style="text-align:center">   afternoon  <img src="{{ url('public/images/afternoon.png') }}" width="20px"></td>
                                             @endif
 
-                                        <td style="text-align:center">
+                                        <td style="text-align:right">
                                             {!! Form::open(['method'=>'GET', 'action' => ['DomesticCounter@edit',$counter->id,$dt ]]) !!}
                                             <input type="hidden" name="date" value={{$dt}}>
-                                            <button class="btn btn-primary btn-sm" ><span style="font-weight: bold"><i class="fa fa-pencil"></i> </span></button>
+                                            <button class="btn btn-primary btn-sm" title="Change Employee on Counter # {{  $counter->counter}}?"><span style="font-weight: bold"><i class="fa fa-pencil"></i> </span></button>
+                                            {!! Form::close() !!}
+                                        </td>
+
+                                        <td>
+                                            {!! Form::open(['method'=>'GET', 'url' => ['domestic_counter/change_counter',$counter->emp_code,$dt,$counter->shift,$counter->counter ]]) !!}
+                                             <button class="btn btn-info btn-sm" title="Reassigned Counter of {{ $counter->emp_code  }}?"><span style="font-weight: bold"><i class="fa fa-repeat" aria-hidden="true"></i> </span></button>
                                             {!! Form::close() !!}
                                         </td>
                                     </tr>
@@ -130,7 +136,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Reason for Employee changed</h4>
+            <h4 class="modal-title" id="myModalLabel">Updates History</h4>
           </div>
           <div class="modal-body">
                 <textarea rows="15" cols="67" disabled="" style="font-size:80%;background-color:transparent">

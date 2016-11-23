@@ -85,6 +85,9 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('add_to_counter_unassigned','DomesticCounter@add_from_unassigned'); // view unassigned 
     Route::get('domestic_counter/test','DomesticCounter@test');
     Route::post('domestic_counter/counter_save','DomesticCounter@save_counter_assignment'); // Save Random counter to Db.
+    Route::get('domestic_counter/change_counter/{code}/{date}/{shift}/{counter}','DomesticCounter@edit_counter_assignment');
+     Route::get('domestic_counter/save_new_counter','DomesticCounter@save_new_counter');
+   
     Route::resource('domestic_counter', 'DomesticCounter');
 
 
