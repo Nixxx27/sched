@@ -57,6 +57,13 @@
                         </button>
                         {!! Form::close() !!}
                     </td>
+
+                    <td style="padding-left:10px">
+                        
+                        <button data-toggle="modal" data-target="#resignedModal" class="button loading-pulse warning" title="Move {{ $employee->name }} to Resign"><i class="fa fa-cloud-download" aria-hidden="true"></i>
+                        </button>
+                    
+                    </td>
                  <tr>
             </table>
          </div>
@@ -227,12 +234,72 @@
     </div>
   </div>
 </div>
+
+
+
+
+<!--- Resigned Employee -->
+<!-- Modal -->
+<div class="modal fade" id="resignedModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Move {{ $employee->name }} to Resign employee?</h4>
+      </div>
+      <div class="modal-body">
+        {!! Form::open(array('name'=>'move_to_resign','id'=>'move_to_resign','action'=>'ResignController@store')) !!}
+       <table class="table">
+            <input type="hidden" name="emp_id" value="{{ $employee->id }}">
+            <input type="hidden" name="idnum" value="{{ $employee->idnum }}">
+            <input type="hidden" name="name" value="{{ $employee->name }}">
+            <input type="hidden" name="emp_type" value="{{ $employee->emp_type }}">
+            <input type="hidden" name="code" value="{{ $employee->code }}">
+            <input type="hidden" name="rank" value="{{ $employee->rank }}">
+            <tr>
+                <td>Select Date of Resignation:</td>
+                    <td colspan="2">
+                        <div class="input-control text" id="datepicker1" data-format="yyyy-mm-dd">
+                            <input type="text" name="dor">
+                            <button class="button"><span class="mif-calendar"></span></button>
+                        </div>
+                    </td>
+            </tr>
+
+           
+           <tr>
+                <td>
+                    <label>Remarks</label>
+                </td>
+               
+           </tr>
+           <tr>
+               <td colspan="2">
+                   <textarea name="remarks" cols="50" rows="5"></textarea>
+               </td>
+           </tr>
+
+        </table>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" onclick="return confirm('Are you sure you want to move {{ $employee->name}} to Resign Record?')" class="btn btn-primary">Save changes</button>
+      </div>
+      {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @section('js')
     <script>
         $(function(){
             $("#datepicker").datepicker();
+        });
+
+        $(function(){
+            $("#datepicker1").datepicker();
         });
 
     </script>

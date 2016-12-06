@@ -85,6 +85,7 @@
                     <ul>
                         <li><a href='{{ url('/employees') }}'><span><i class="fa fa-caret-right fg-red"></i> Employee List</span></a></li>
                         <li><a href='{{ url('/employees/create') }}'><span><i class="fa fa-caret-right fg-red"></i> New Employee </span></a></li>
+                        <li><a href='{{ url('/resign') }}'><span><i class="fa fa-caret-right fg-red"></i> View Resigned Employees</span></a></li>
                         <li><a href='{{ url('/rank') }}'><span><i class="fa fa-caret-right fg-red"></i> Rank type</span></a></li>
                         <li class='last'><a href='{{ url('/level') }}'><span><i class="fa fa-caret-right fg-red"></i> Level</span></a></li>
                     </ul>

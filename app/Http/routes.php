@@ -86,7 +86,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('domestic_counter/test','DomesticCounter@test');
     Route::post('domestic_counter/counter_save','DomesticCounter@save_counter_assignment'); // Save Random counter to Db.
     Route::get('domestic_counter/change_counter/{code}/{date}/{shift}/{counter}','DomesticCounter@edit_counter_assignment');
-     Route::get('domestic_counter/save_new_counter','DomesticCounter@save_new_counter');
+    Route::get('domestic_counter/save_new_counter','DomesticCounter@save_new_counter');
    
     Route::resource('domestic_counter', 'DomesticCounter');
 
@@ -110,6 +110,11 @@ Route::group(['middleware' => 'web'], function () {
     Route::resource('employees', 'EmployeesController');
     Route::post('employees/add_qualification/{employees}', 'EmployeesController@add_qualification'); // Add Qualification to Employee
     Route::post('employees/delete_qualification/{employees}', 'EmployeesController@destroy_employee_qualification'); // Add Qualification to Employee
+
+        /*
+     * @return Resign Controller
+     */
+    Route::resource('resign', 'ResignController');
     
     /*
      * @return Aircraft Controller
