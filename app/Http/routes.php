@@ -87,6 +87,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('domestic_counter/counter_save','DomesticCounter@save_counter_assignment'); // Save Random counter to Db.
     Route::get('domestic_counter/change_counter/{code}/{date}/{shift}/{counter}','DomesticCounter@edit_counter_assignment');
     Route::get('domestic_counter/save_new_counter','DomesticCounter@save_new_counter');
+    Route::get('domestic_counter/print_assignment/{date}/','DomesticCounter@print_assignment');
    
     Route::resource('domestic_counter', 'DomesticCounter');
 

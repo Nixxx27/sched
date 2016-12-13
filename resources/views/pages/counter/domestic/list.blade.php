@@ -73,9 +73,12 @@
                     <span class="icon mif-arrow-up-right bg-darkCobalt"></span>
                 </button>
                </a>
-            <button onclick='printDiv();' class="button info loading-pulse"  title="view unassigned Personnel">
+
+            <a href='domestic_counter/print_assignment/{{ $dt }}'>   
+            <button class="button info loading-pulse"  title="view unassigned Personnel">
                  <span class="mif-printer"></span> 
             </button>
+            </a>
      
          
             @endif

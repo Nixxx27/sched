@@ -896,6 +896,25 @@ class DomesticCounter extends Controller
 
      }
 
+    /**
+     * @return Print Counter assignment base on selected date
+     * @param $date
+     */
+
+     public function print_assignment($dt,Request $request)
+     {
+
+
+        //@return Query where date is, Order by Counter.
+        $dom_counter = dom_counter::where('date', '=', $dt)
+            ->orderBy('shift', 'asc')
+            ->orderBy('counter', 'asc')
+            ->get();
+
+
+        return view('pages.counter.domestic.print_assignment', compact('dom_counter', 'dt') );
+     }
+
 
 
     /**

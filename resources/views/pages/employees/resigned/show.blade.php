@@ -56,11 +56,11 @@
             <table border="1" cellpadding="20px" cellspacing="20px" class="table-responsive" >
                 <tr>
                     <td class="details_td">Date of Resignation</td>
-                    <td class="data_td"> {{ $resign->dor->format('M-d-Y') }}</td>
+                    <td style="padding-left:10px"> {{ $resign->dor->format('M-d-Y') }}</td>
                 </tr>
                 <tr>
                     <td class="details_td">Emp ID</td>
-                    <td class="data_td"> {{ $resign->idnum }}</td>
+                    <td  style="padding-left:10px"> {{ $resign->idnum }}</td>
                 </tr>
                  <tr>
                     <td class="details_td">Name</td>
