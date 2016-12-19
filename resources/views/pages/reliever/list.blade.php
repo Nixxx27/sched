@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-lg-12">
             <h2 class="page-header">
-                Reliver Type
+                Reliever Type
                 <small>view all</small>
             </h2>
             {{--<ol class="breadcrumb">--}}
